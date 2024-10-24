@@ -3,6 +3,8 @@ from chessboard import Chessboard
 from agent import Agent
 import numpy as np
 import util
+from reinforcementLearningModel import ReinforcementLearningModel as RLM
+import parameters
 
 if __name__ == '__main__':
     white = Agent()
@@ -18,3 +20,6 @@ if __name__ == '__main__':
         game.play_move()
         print("--------------------------------------- \n")
         game.chessBoard.board_to_nn_input(game.chessBoard.board)
+
+    rlm = RLM(parameters.neural_network_input, parameters.neural_network_output)
+    rlm.build(True)
