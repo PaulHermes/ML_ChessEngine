@@ -10,8 +10,7 @@ amount_feature_planes_m = (6 + 6 + 2)
 
 # Colour + Total Move count + P1 Castling + P2 Castling + No Progress Count
 constant_valued_input_l = (1 + 1 + 2 + 2 + 1)
-# No Progress Count could be left out for faster training since this is rather niche in low elo. therefore:
-# ShouldUseNoProgressCount = True
+# No Progress Count could be left out for faster training since this is rather niche in low elo.
 
 history_t = 8 #is implementing this too much? big ones use history, smaller ones dont.
 # most likely will not implement in beginning and add as way to improve. therefore:
