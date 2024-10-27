@@ -12,12 +12,12 @@ amount_feature_planes_m = (6 + 6 + 2)
 constant_valued_input_l = (1 + 1 + 2 + 2 + 1)
 # No Progress Count could be left out for faster training since this is rather niche in low elo.
 
-history_t = 8 #is implementing this too much? big ones use history, smaller ones dont.
-# most likely will not implement in beginning and add as way to improve. therefore:
-#NeuralNetworkInput = (AmountFeaturePlanesM * HistoryT + ConstantValuedInputL, 8, 8)
-# En passant needs history tho so extra layer for en passant?
 
-neural_network_input = (8, 8, amount_feature_planes_m + constant_valued_input_l)
+history_t = 8 # Is implementing this too much? big ones use history, smaller ones dont.
+# Made it optional incase training is too slow
+use_history = True
+
+neural_network_input = (8, 8, amount_feature_planes_m * history_t + constant_valued_input_l) if use_history else (8, 8, amount_feature_planes_m + constant_valued_input_l)
 
 # -------------------------------------------------------------------------------
 
