@@ -24,7 +24,8 @@ class Chessboard:
         print(self.__str__())
         return self.board
 
-    def board_to_nn_input(self, board_input: chess.Board) -> np.ndarray:
+    @staticmethod
+    def board_to_nn_input(board_input: chess.Board) -> np.ndarray:
         # Create a copy of the board to safely modify for history states
         board = board_input.copy()
 

@@ -39,7 +39,7 @@ learning_rate = 0.2 # "The learning rate was set to 0.2 for each game, and was d
 
 # https://www.chessprogramming.org/Leela_Chess_Zero#Network
 # https://www.chessprogramming.org/AlphaZero#Network_Architecture
-# the smaller the faster it trains and shows progress, but this comes with a downside of a lower skill cap. i will start with Alpha Zeros Architecture and might increase to what lc0 uses
+# the smaller the faster it trains and shows progress, but this comes with a downside of a lower skill cap
 
 convolution_filters = 256
 
@@ -50,5 +50,8 @@ kernel_size = 3
 stride = 1
 # -------------------------------------------------------------------------------
 
+# --------------------------- MCTS Parameters  -----------------
+number_of_simulations = 10000
+# -------------------------------------------------------------------------------
 
 

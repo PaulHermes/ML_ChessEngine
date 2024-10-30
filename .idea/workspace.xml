@@ -4,11 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1b697f9-be95-4855-b393-4953656cf0d0" name="Changes" comment="Basic MCTS implemented">
+    <list default="true" id="c1b697f9-be95-4855-b393-4953656cf0d0" name="Changes" comment="Added History&#10;Optional History for Board to NN input&#10;&#10;changed axis for board to NN input&#10;&#10;NN input print function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/chessboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/chessboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/monteCarloTreeSearch.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/monteCarloTreeSearch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/parameters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcementLearningModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcementLearningModel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,13 +119,22 @@
       <option name="project" value="LOCAL" />
       <updated>1729880722454</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added History&#10;Optional History for Board to NN input&#10;&#10;changed axis for board to NN input&#10;&#10;NN input print function">
+      <option name="closed" value="true" />
+      <created>1729988368956</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1729988368956</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial Commit&#10;Includes Basic Chess Environment and State Representation(without history)" />
     <MESSAGE value="Basic CNN&#10;gets build and has optional plotting.&#10; it seems correct on first glance but i will have to look it over later" />
     <MESSAGE value="Basic MCTS implemented" />
-    <option name="LAST_COMMIT_MESSAGE" value="Basic MCTS implemented" />
+    <MESSAGE value="Added History&#10;Optional History for Board to NN input&#10;&#10;changed axis for board to NN input&#10;&#10;NN input print function" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added History&#10;Optional History for Board to NN input&#10;&#10;changed axis for board to NN input&#10;&#10;NN input print function" />
   </component>
 </project>

@@ -1,5 +1,6 @@
 from keras.src.utils.module_utils import tensorflow
 from tensorflow.keras import layers, models, Input
+from tensorflow.keras.optimizers import Adam
 import parameters
 
 
@@ -58,6 +59,9 @@ class ReinforcementLearningModel:
 
             # Create the model
             self.model = models.Model(inputs=inputs, outputs=[policy_output, value_output])
+
+            self.model.compile(loss={'policy_head': 'categorical_crossentropy','value_head': 'mean_squared_error'},
+                               optimizer=Adam(learning_rate=parameters.learning_rate),loss_weights={'policy_head': 1.0,'value_head': 1.0})
 
             if(should_plot_model):
                 tensorflow.keras.utils.plot_model(self.model, to_file='images/model.png', show_shapes=True, show_layer_names=True)

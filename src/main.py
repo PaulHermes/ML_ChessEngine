@@ -5,22 +5,23 @@ import numpy as np
 import util
 from reinforcementLearningModel import ReinforcementLearningModel as RLM
 import parameters
+import tensorflow as tf
+
 
 if __name__ == '__main__':
-    white = Agent()
-    black = Agent()
+    rlm = RLM(parameters.neural_network_input, parameters.neural_network_output)
+    rlm.build()
+
+    white = Agent(rlm)
+    black = Agent(rlm)
+
     board = Chessboard()
     game = Game(board, white, black)
 
+    # Print settings
     np.set_printoptions(threshold=np.inf, linewidth=np.inf)
+    tf.keras.utils.disable_interactive_logging()
 
-    game.chessBoard.board_to_nn_input(game.chessBoard.board)
-    # for testing purposes just do first legal move 25 times now
-    for i in range(0,25):
+    for i in range(100):
         game.play_move()
-        print("--------------------------------------- \n")
-        game.chessBoard.board_to_nn_input(game.chessBoard.board)
-
-    game.chessBoard.print_nn_input(game.chessBoard.board_to_nn_input(game.chessBoard.board))
-    rlm = RLM(parameters.neural_network_input, parameters.neural_network_output)
-    rlm.build(True)
+        print("---------------------------------------\n")
