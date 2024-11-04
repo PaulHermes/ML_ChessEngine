@@ -11,6 +11,7 @@ import os
 import chess
 import datetime
 import util
+import glob
 
 class SelfPlay:
     def __init__(self, model, num_games=100, random_start_probability=0.5):
@@ -92,6 +93,46 @@ class SelfPlay:
             json.dump(self.data, f)
         print(f"Self-play data saved to {filename}")
 
+    def evaluate_against_previous_versions(self, num_games=100):
+        checkpoint_folder = "../checkpoints"
+        checkpoints = sorted(glob.glob(f"{checkpoint_folder}/model_weights_cycle_*.h5"), key=os.path.getctime)
+
+        results = {}
+
+        # For each previous checkpoint, evaluate the latest model against it
+        for i, checkpoint in enumerate(checkpoints[:-1]):
+            print(f"\n--- Evaluating against checkpoint {checkpoint} ---")
+            opponent_model = ReinforcementLearningModel(parameters.neural_network_input,
+                                                        parameters.neural_network_output)
+            opponent_model.build(compile_model=False)
+            opponent_model.model.load_weights(checkpoint)
+
+            wins, losses, draws = 0, 0, 0
+
+            for _ in range(num_games):
+                chess_board = Chessboard()
+                white_agent = Agent(self.model)
+                black_agent = Agent(opponent_model)
+
+                game = Game(chess_board, white_agent, black_agent)
+
+                while not chess_board.board.is_game_over():
+                    best_move = game.current_agent.get_best_move(chess_board.board, greedy=True)
+                    game.play_move(best_move)
+
+                outcome = self.get_game_outcome(chess_board)
+                if outcome == 1:
+                    wins += 1
+                elif outcome == 0:
+                    losses += 1
+                else:
+                    draws += 1
+
+            results[checkpoint] = {"wins": wins, "losses": losses, "draws": draws}
+            print(f"Results against {checkpoint}: {wins} wins, {losses} losses, {draws} draws")
+
+        return results
+
 if __name__ == '__main__':
     model = ReinforcementLearningModel(parameters.neural_network_input, parameters.neural_network_output)
     model.build()
@@ -100,6 +141,9 @@ if __name__ == '__main__':
     tf.keras.utils.disable_interactive_logging()
 
     # Run self-play games
-    num_games = 100
+    num_games = 3
     self_play = SelfPlay(model, num_games, 0)
-    self_play.play()
+    #self_play.play()
+
+    # Evaluate against previous checkpoints
+    results = self_play.evaluate_against_previous_versions(num_games)
