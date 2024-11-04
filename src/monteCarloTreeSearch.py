@@ -96,7 +96,11 @@ class MonteCarloTree:
     def probabilities_to_actions(self, policy_output, board):
         legal_moves = list(board.legal_moves)
         legal_probs = np.array([policy_output[self.move_to_index(move)] for move in legal_moves])
-        legal_probs /= legal_probs.sum()
+        total_prob = legal_probs.sum()
+        if total_prob > 0:
+            legal_probs /= total_prob
+        else:
+            legal_probs = np.ones(len(legal_probs)) / len(legal_probs)  # Uniform distribution if sum is zero
         return legal_moves, legal_probs
 
     def move_to_index(self, move):

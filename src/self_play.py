@@ -9,7 +9,8 @@ import random
 import json
 import os
 import chess
-
+import datetime
+import util
 
 class SelfPlay:
     def __init__(self, model, num_games=100, random_start_probability=0.5):
@@ -21,6 +22,9 @@ class SelfPlay:
 
         if not os.path.exists(self.save_folder):
             os.makedirs(self.save_folder)
+
+        util.load_latest_weights(self.model.model, "../checkpoints")
+
 
     def play(self):
         for game_index in range(self.num_games):
@@ -41,7 +45,7 @@ class SelfPlay:
             while not chess_board.board.is_game_over():
                 nn_input = Chessboard.board_to_nn_input(chess_board.board)
 
-                best_move = game.current_agent.get_best_move(chess_board.board)
+                best_move = game.current_agent.get_best_move(chess_board.board, greedy=False)
 
                 move_data = {
                     "state": nn_input.tolist(),
@@ -50,7 +54,7 @@ class SelfPlay:
                 }
                 game_data.append(move_data)
 
-                game.play_move()
+                game.play_move(best_move)
 
             outcome = self.get_game_outcome(chess_board)
             for move in game_data:
@@ -58,13 +62,10 @@ class SelfPlay:
             self.data.extend(game_data)
 
             # Save data after each game
-            self.save_data(filename=f"{self.save_folder}/self_play_data_game_{game_index + 1}.json")
+            timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+            self.save_data(filename=f"{self.save_folder}/self_play_data_game_{timestamp}.json")
             print(f"Game {game_index + 1} finished with outcome: {outcome}")
-
             game.reset()
-
-        # Saving data of all games as well for now. Will see if this is better for training
-        self.save_data(filename=f"{self.save_folder}/self_play_data_all_games.json")
 
     def get_random_position(self):
         board = chess.Board()
@@ -75,7 +76,6 @@ class SelfPlay:
             else:
                 move = random.choice(list(board.legal_moves))
                 board.push(move)
-
         return board.fen()
 
     def get_game_outcome(self, chess_board):
@@ -92,7 +92,6 @@ class SelfPlay:
             json.dump(self.data, f)
         print(f"Self-play data saved to {filename}")
 
-
 if __name__ == '__main__':
     model = ReinforcementLearningModel(parameters.neural_network_input, parameters.neural_network_output)
     model.build()
@@ -101,6 +100,6 @@ if __name__ == '__main__':
     tf.keras.utils.disable_interactive_logging()
 
     # Run self-play games
-    num_games = 10
-    self_play = SelfPlay(model, num_games, 1.0)
+    num_games = 100
+    self_play = SelfPlay(model, num_games, 0)
     self_play.play()

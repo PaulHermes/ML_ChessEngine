@@ -22,7 +22,7 @@ class ReinforcementLearningModel:
     # encoding a probability distribution over 64x73 = 4,672 possible moves, where illegal moves were masked out by setting their probabilities to zero,
     # re-normalising the probabilities for remaining moves. The value head applies an additional rectified,
     # batch-normalized convolution of 1 filter of kernel size 1x1 with stride 1, followed by a rectified linear layer of size 256 and a tanh-linear layer of size 1.
-    def build(self, should_plot_model: bool = False):
+    def build(self, should_plot_model: bool = False, compile_model: bool = True):
         inputs = Input(shape=self.input_shape)
 
         # Initial convolutional layer (before residual blocks)
@@ -60,13 +60,18 @@ class ReinforcementLearningModel:
             # Create the model
             self.model = models.Model(inputs=inputs, outputs=[policy_output, value_output])
 
-            self.model.compile(loss={'policy_head': 'categorical_crossentropy','value_head': 'mean_squared_error'},
-                               optimizer=Adam(learning_rate=parameters.learning_rate),loss_weights={'policy_head': 1.0,'value_head': 1.0})
+            if compile_model:
+                self.compile_model()
 
-            if(should_plot_model):
+            if should_plot_model:
                 tensorflow.keras.utils.plot_model(self.model, to_file='images/model.png', show_shapes=True, show_layer_names=True)
 
-
+    def compile_model(self):
+        self.model.compile(
+            optimizer=Adam(learning_rate=parameters.learning_rate),
+            loss={'policy_head': 'categorical_crossentropy', 'value_head': 'mean_squared_error'},
+            loss_weights={'policy_head': 1.0, 'value_head': 1.0}
+        )
 
 
     def residual_block(self, x):

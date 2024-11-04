@@ -21,7 +21,3 @@ if __name__ == '__main__':
     # Print settings
     np.set_printoptions(threshold=np.inf, linewidth=np.inf)
     tf.keras.utils.disable_interactive_logging()
-
-    for i in range(100):
-        game.play_move()
-        print("---------------------------------------\n")

@@ -54,7 +54,7 @@ stride = 1
 
 # https://arxiv.org/pdf/1712.01815 Page 14
 
-number_of_simulations = 800
+number_of_simulations = 100
 # -------------------------------------------------------------------------------
 
 

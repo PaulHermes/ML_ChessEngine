@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1b697f9-be95-4855-b393-4953656cf0d0" name="Changes" comment="Self Play and small tweak of best-move">
+    <list default="true" id="c1b697f9-be95-4855-b393-4953656cf0d0" name="Changes" comment="Self Play random starting position added&#10;will be better for training later on">
+      <change afterPath="$PROJECT_DIR$/src/training_pipeline.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/monteCarloTreeSearch.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/monteCarloTreeSearch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/parameters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcementLearningModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcementLearningModel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/self_play.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/self_play.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,9 +41,11 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.agent.executor": "Run",
     "Python.main.executor": "Run",
     "Python.monteCarloTreeSearch.executor": "Run",
     "Python.self_play.executor": "Run",
+    "Python.training_pipeline.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "com.codeium.enabled": "true",
@@ -139,7 +147,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730507794715</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Self Play random starting position added&#10;will be better for training later on">
+      <option name="closed" value="true" />
+      <created>1730510425288</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1730510425288</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -149,6 +165,7 @@
     <MESSAGE value="Added History&#10;Optional History for Board to NN input&#10;&#10;changed axis for board to NN input&#10;&#10;NN input print function" />
     <MESSAGE value="CNN usage of MCTS implemented&#10;also added loss for CNN" />
     <MESSAGE value="Self Play and small tweak of best-move" />
-    <option name="LAST_COMMIT_MESSAGE" value="Self Play and small tweak of best-move" />
+    <MESSAGE value="Self Play random starting position added&#10;will be better for training later on" />
+    <option name="LAST_COMMIT_MESSAGE" value="Self Play random starting position added&#10;will be better for training later on" />
   </component>
 </project>
