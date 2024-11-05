@@ -12,7 +12,7 @@ import chess
 import datetime
 import util
 import glob
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 
 class SelfPlay:
     def __init__(self, model, num_games=100, random_start_probability=0.5):
@@ -60,7 +60,7 @@ class SelfPlay:
         self.save_data(filename=f"{self.save_folder}/self_play_data_game_{timestamp}.json")
 
     def play(self):
-        with ProcessPoolExecutor() as executor:
+        with ThreadPoolExecutor() as executor:
             futures = [executor.submit(self.play_game, i) for i in range(self.num_games)]
             for future in futures:
                 future.result()

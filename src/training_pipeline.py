@@ -47,7 +47,7 @@ class TrainingPipeline:
         return from_square * 64 + to_square
 
     def train(self, cycle):
-        util.load_latest_weights(self.model.model, self.checkpoint_folder)
+        util.load_latest_weights(self.model, self.checkpoint_folder)
 
         states, policy_targets, value_targets = self.load_data()
 
@@ -69,7 +69,7 @@ class TrainingPipeline:
 if __name__ == '__main__':
     model = ReinforcementLearningModel(parameters.neural_network_input, parameters.neural_network_output)
     model.build()
-
+    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     pipeline = TrainingPipeline(model)
     cycle_number = 1
     pipeline.train(cycle=cycle_number)

@@ -1,4 +1,4 @@
-from keras.src.utils.module_utils import tensorflow
+import tensorflow as tf
 from tensorflow.keras import layers, models, Input
 from tensorflow.keras.optimizers import Adam
 import parameters
@@ -64,7 +64,7 @@ class ReinforcementLearningModel:
                 self.compile_model()
 
             if should_plot_model:
-                tensorflow.keras.utils.plot_model(self.model, to_file='images/model.png', show_shapes=True, show_layer_names=True)
+                tf.keras.utils.plot_model(self.model, to_file='images/model.png', show_shapes=True, show_layer_names=True)
 
     def compile_model(self):
         self.model.compile(
