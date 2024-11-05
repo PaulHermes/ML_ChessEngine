@@ -41,6 +41,7 @@ class SelfPlay:
         game_data = []
 
         while not chess_board.board.is_game_over():
+            print(f"------------ Game {game_index} ------------- \n")
             nn_input = Chessboard.board_to_nn_input(chess_board.board)
             best_move = game.current_agent.get_best_move(chess_board.board, greedy=False)
             move_data = {
@@ -50,6 +51,7 @@ class SelfPlay:
             }
             game_data.append(move_data)
             game.play_move(best_move)
+            print(f"--------------------------------------- \n")
 
         outcome = self.get_game_outcome(chess_board)
         for move in game_data:
