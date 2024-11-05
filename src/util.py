@@ -23,7 +23,8 @@ def load_latest_weights(model, checkpoint_folder="../checkpoints"):
     checkpoints = glob(f"{checkpoint_folder}/model_weights_cycle_*.h5")
     if checkpoints:
         latest_checkpoint = max(checkpoints, key=os.path.getctime)
-        model.load_weights(latest_checkpoint)
+        model.model.load_weights(latest_checkpoint)
+        model.compile_model()
         print(f"Loaded weights from {latest_checkpoint}")
     else:
         print("No checkpoint weights found. Starting with untrained weights.")

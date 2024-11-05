@@ -12,6 +12,7 @@ import chess
 import datetime
 import util
 import glob
+from concurrent.futures import ProcessPoolExecutor
 
 class SelfPlay:
     def __init__(self, model, num_games=100, random_start_probability=0.5):
@@ -24,49 +25,45 @@ class SelfPlay:
         if not os.path.exists(self.save_folder):
             os.makedirs(self.save_folder)
 
-        util.load_latest_weights(self.model.model, "../checkpoints")
+        util.load_latest_weights(self.model, "../checkpoints")
 
+
+    def play_game(self, game_index):
+        if random.random() < self.random_start_probability:
+            random_fen = self.get_random_position()
+            chess_board = Chessboard(starting_position_FEN=random_fen)
+        else:
+            chess_board = Chessboard()
+
+        white_agent = Agent(self.model)
+        black_agent = Agent(self.model)
+        game = Game(chess_board, white_agent, black_agent)
+        game_data = []
+
+        while not chess_board.board.is_game_over():
+            nn_input = Chessboard.board_to_nn_input(chess_board.board)
+            best_move = game.current_agent.get_best_move(chess_board.board, greedy=False)
+            move_data = {
+                "state": nn_input.tolist(),
+                "move": best_move.uci(),
+                "player": "white" if game.current_agent == white_agent else "black"
+            }
+            game_data.append(move_data)
+            game.play_move(best_move)
+
+        outcome = self.get_game_outcome(chess_board)
+        for move in game_data:
+            move["outcome"] = outcome
+        self.data.extend(game_data)
+
+        timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        self.save_data(filename=f"{self.save_folder}/self_play_data_game_{timestamp}.json")
 
     def play(self):
-        for game_index in range(self.num_games):
-            print(f"\n--- Starting game {game_index + 1} ---")
-
-            if random.random() < self.random_start_probability:
-                random_fen = self.get_random_position()
-                chess_board = Chessboard(starting_position_FEN=random_fen)
-                print(f"Game {game_index + 1} starting from random position: {random_fen}")
-            else:
-                chess_board = Chessboard()
-
-            white_agent = Agent(self.model)
-            black_agent = Agent(self.model)
-            game = Game(chess_board, white_agent, black_agent)
-            game_data = []
-
-            while not chess_board.board.is_game_over():
-                nn_input = Chessboard.board_to_nn_input(chess_board.board)
-
-                best_move = game.current_agent.get_best_move(chess_board.board, greedy=False)
-
-                move_data = {
-                    "state": nn_input.tolist(),
-                    "move": best_move.uci(),
-                    "player": "white" if game.current_agent == white_agent else "black"
-                }
-                game_data.append(move_data)
-
-                game.play_move(best_move)
-
-            outcome = self.get_game_outcome(chess_board)
-            for move in game_data:
-                move["outcome"] = outcome
-            self.data.extend(game_data)
-
-            # Save data after each game
-            timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-            self.save_data(filename=f"{self.save_folder}/self_play_data_game_{timestamp}.json")
-            print(f"Game {game_index + 1} finished with outcome: {outcome}")
-            game.reset()
+        with ProcessPoolExecutor() as executor:
+            futures = [executor.submit(self.play_game, i) for i in range(self.num_games)]
+            for future in futures:
+                future.result()
 
     def get_random_position(self):
         board = chess.Board()
@@ -141,9 +138,10 @@ if __name__ == '__main__':
     tf.keras.utils.disable_interactive_logging()
 
     # Run self-play games
-    num_games = 3
+    num_games = 6
     self_play = SelfPlay(model, num_games, 0)
-    #self_play.play()
+    self_play.play()
 
     # Evaluate against previous checkpoints
-    results = self_play.evaluate_against_previous_versions(num_games)
+    #eval_num_games = 100
+    #results = self_play.evaluate_against_previous_versions(eval_num_games)
