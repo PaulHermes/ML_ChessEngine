@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import chess
 import threading
@@ -106,8 +107,9 @@ class MonteCarloTree:
         result = self.simulation(leaf)
         self.backpropagation(leaf, result)
 
-    def run(self, num_simulations, num_threads=4):
-        with ThreadPoolExecutor(max_workers=num_threads) as executor:
+    def run(self, num_simulations):
+        max_workers = os.cpu_count()
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [executor.submit(self.run_simulation) for _ in range(num_simulations)]
             for future in futures:
                 future.result()  # Wait for all simulations to complete
