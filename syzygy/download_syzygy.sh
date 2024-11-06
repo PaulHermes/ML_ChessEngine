@@ -5,8 +5,8 @@ dtz_url="https://tablebase.lichess.ovh/tables/standard/3-4-5-dtz/"
 wdl_url="https://tablebase.lichess.ovh/tables/standard/3-4-5-wdl/"
 
 # Folders to save downloads
-download_folder_dtz="./3-4-5-dtz"
-download_folder_wdl="./3-4-5-wdl"
+download_folder_dtz="./"
+download_folder_wdl="./"
 
 # Create directories if they don't exist
 mkdir -p "$download_folder_dtz"
