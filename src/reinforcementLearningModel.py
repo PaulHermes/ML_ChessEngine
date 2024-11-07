@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models, Input
-from tensorflow.keras.optimizers import AdamW
+from tensorflow.keras.optimizers import Adam
 import parameters
 
 
@@ -68,7 +68,7 @@ class ReinforcementLearningModel:
 
     def compile_model(self):
         self.model.compile(
-            optimizer=AdamW(learning_rate=parameters.learning_rate, weight_decay=1e-5, beta_1=0.8, beta_2=0.99),
+            optimizer=Adam(learning_rate=parameters.learning_rate, weight_decay=1e-5, beta_1=0.8, beta_2=0.99),
             loss={'policy_head': 'categorical_crossentropy', 'value_head': 'mean_squared_error'},
             loss_weights={'policy_head': 1.0, 'value_head': 1.0}
         )
