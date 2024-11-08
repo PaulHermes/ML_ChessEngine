@@ -1,0 +1,105 @@
+# Training Regimen for Chess AI Reinforcement Learning
+
+This document provides a checklist-style guide for training a Chess AI using reinforcement learning. Each stage has specific hyperparameters and steps to help progressively improve model performance.
+
+---
+
+## Training Stages Overview
+
+| Stage              | Self-Play Games per Cycle | Epochs per Cycle | Batch Size | Learning Rate | MCTS Simulations per Move | AdamW Beta Values | Weight Decay |
+|--------------------|---------------------------|------------------|------------|--------------|---------------------------|-------------------|--------------|
+| **Warm-Up**        | 100                       | 5               | 64         | 0.02 → 0.2   | 75                        | β1=0.85, β2=0.98  | 1e-4         |
+| **Main Training**  | 500                       | 10              | 128        | 0.2 → 0.02   | 200                       | β1=0.9, β2=0.999  | 1e-5         |
+| **Fine-Tuning**    | 1000                      | 20              | 256        | 0.02 → 0.002 | 400                       | β1=0.9, β2=0.999  | 1e-5         |
+
+---
+
+### Reasoning of Parameter Choices
+
+- **Self-Play Games per Cycle**: Start with fewer games in the warm-up to capture basic patterns, increase for exploration in main training, and further increase for fine-tuning to capture nuanced strategies. This setup is on the lower resource side, balancing computational cost with performance.
+- **Epochs per Cycle**: Fewer epochs in the first two stages to avoid overfitting early data and more epochs in fine-tuning to refine the model’s decisions.
+- **Batch Size**: The batch size increases progressively, allowing faster adaptation in early stages and stable updates in later stages. This choice also considers computational resources.
+- **Learning Rate**: The learning rate schedule increases during warm-up for larger updates and then gradually decreases in main training and fine-tuning for finer adjustments.
+- **MCTS Simulations per Move**: A low start helps the model stabilize initially, with increases in later stages to provide more precise evaluations.
+- **AdamW Beta Values**: Lower beta values in the beginning help the optimizer adapt quickly. Default beta values in the later stages provide stability.
+- **Weight Decay**: Higher weight decay in warm-up helps prevent overfitting and stabilize early learning. Lower weight decay in later stages allows for finer adjustments.
+
+---
+
+## Stage 0: Untrained Model
+
+**Objective**: Get weights for untrained model for later comparisons.
+
+### Checklist
+- [X] **Run Training**: Run `training_pipeline.py` with no data to get randomly initialized weights.
+
+---
+
+## Stage 1: Warm-Up
+
+**Objective**: Stabilize the model with small updates to prevent large fluctuations in early training.
+
+### Checklist
+1. **Configure Hyperparameters**:
+   - [ ] Set **MCTS Simulations per Move** to `75`.
+   - [ ] Set **Batch Size** to `64`.
+   - [ ] Set initial **Learning Rate** to `0.02`.
+   - [ ] Configure a **Learning Rate Schedule** to increase from `0.02` to `0.2` over this stage.
+   - [ ] Use **AdamW Optimizer** with the following settings:
+     - [ ] **Beta Values**: `β1=0.85`, `β2=0.98`
+     - [ ] **Weight Decay**: `1e-4`
+2. **Play Self-Play Games**:
+   - [ ] Play `100` self-play games per cycle.
+3. **Training**:
+   - [ ] Train the model with `5` epochs per cycle.
+4. **Evaluate**:
+   - [ ] Evaluate against previous checkpoints.
+
+---
+
+## Stage 2: Main Training
+
+**Objective**: Broaden exploration and improve strategic patterns by using a high learning rate that gradually decays, along with more MCTS simulations.
+
+### Checklist
+1. **Prepare Data and Backup**:
+   - [ ] Move the previous self-play data to a backup folder before generating new data.
+2. **Configure Hyperparameters**:
+   - [ ] Increase **MCTS Simulations per Move** to `200`.
+   - [ ] Set **Batch Size** to `128`.
+   - [ ] Set initial **Learning Rate** to `0.2`.
+   - [ ] Configure a **Learning Rate Schedule** to decay from `0.2` to `0.02` over this stage.
+   - [ ] Use **AdamW Optimizer** with the following settings:
+     - [ ] **Beta Values**: `β1=0.9`, `β2=0.999`
+     - [ ] **Weight Decay**: `1e-5`
+3. **Play Self-Play Games**:
+   - [ ] Play `500` self-play games per cycle.
+4. **Training**:
+   - [ ] Train the model with `10` epochs per cycle.
+5. **Evaluate**:
+   - [ ] Evaluate against previous checkpoints.
+---
+
+## Stage 3: Fine-Tuning
+
+**Objective**: Refine and polish the model with smaller updates and more detailed evaluations, converging on a highly refined play style.
+
+### Checklist
+1. **Prepare Data and Backup**:
+   - [ ] Move the previous self-play data to a backup folder before generating new data.
+2. **Configure Hyperparameters**:
+   - [ ] Increase **MCTS Simulations per Move** to `400`.
+   - [ ] Set **Batch Size** to `256`.
+   - [ ] Set initial **Learning Rate** to `0.02`.
+   - [ ] Configure a **Learning Rate Schedule** to decay from `0.02` to `0.002` over this stage.
+   - [ ] Use **AdamW Optimizer** with the following settings:
+     - [ ] **Beta Values**: `β1=0.9`, `β2=0.999`
+     - [ ] **Weight Decay**: `1e-5`
+3. **Play Self-Play Games**:
+   - [ ] Play `1000` self-play games per cycle.
+4. **Training**:
+   - [ ] Train the model with `20` epochs per cycle.
+5. **Evaluate**:
+   - [ ] Evaluate against previous checkpoints.
+---
+
