@@ -34,9 +34,6 @@ neural_network_output = (8 * 8 * possible_moves,)
 
 # --------------------------- Neural Network Training Parameters  -----------------
 # https://arxiv.org/pdf/1712.01815 Page 14-15
-
-learning_rate = 0.2 # "The learning rate was set to 0.2 for each game, and was dropped three times (to 0.02, 0.002 and 0.0002 respectively) during the course of training
-
 # https://www.chessprogramming.org/Leela_Chess_Zero#Network
 # https://www.chessprogramming.org/AlphaZero#Network_Architecture
 # the smaller the faster it trains and shows progress, but this comes with a downside of a lower skill cap
@@ -48,13 +45,24 @@ residual_block_count = 19
 kernel_size = 3
 
 stride = 1
+
+batch_size = 64
+
+adam_beta_1 = 0.85
+adam_beta_2 = 0.98
+
+weight_decay = 1e-4
+
+self_play_per_cycle = 100
+
+eval_games = 100
 # -------------------------------------------------------------------------------
 
 # --------------------------- MCTS Parameters  -----------------
 
 # https://arxiv.org/pdf/1712.01815 Page 14
 
-number_of_simulations = 100
+number_of_simulations = 75
 # -------------------------------------------------------------------------------
 
 

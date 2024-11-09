@@ -40,15 +40,15 @@ This document provides a checklist-style guide for training a Chess AI using rei
 **Objective**: Stabilize the model with small updates to prevent large fluctuations in early training.
 
 ### Checklist
-- **Total Cycles**: 5
+- **Total Cycles**: 0/5
 1. **Configure Hyperparameters**:
-   - [ ] Set **MCTS Simulations per Move** to `75`.
-   - [ ] Set **Batch Size** to `64`.
-   - [ ] Set initial **Learning Rate** to `0.02`.
-   - [ ] Configure a **Learning Rate Schedule** to increase from `0.02` to `0.2` over this stage.
+   - [X] Set **MCTS Simulations per Move** to `75`.
+   - [X] Set **Batch Size** to `64`.
+   - [X] Set initial **Learning Rate** to `0.02`.
+   - [X] Configure a **Learning Rate Schedule** to increase from `0.02` to `0.2` over this stage.
    - [ ] Use **AdamW Optimizer** with the following settings:
-     - [ ] **Beta Values**: `β1=0.85`, `β2=0.98`
-     - [ ] **Weight Decay**: `1e-4`
+     - [X] **Beta Values**: `β1=0.85`, `β2=0.98`
+     - [X] **Weight Decay**: `1e-4`
 2. **Play Self-Play Games**:
    - [ ] Play `100` self-play games per cycle.
 3. **Training**:
@@ -63,7 +63,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
 **Objective**: Broaden exploration and improve strategic patterns by using a high learning rate that gradually decays, along with more MCTS simulations.
 
 ### Checklist
-- **Total Cycles**: 10
+- **Total Cycles**: 0/10
 1. **Prepare Data and Backup**:
    - [ ] Move the previous self-play data to a backup folder before generating new data.
 2. **Configure Hyperparameters**:
@@ -87,7 +87,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
 **Objective**: Refine and polish the model with smaller updates and more detailed evaluations, converging on a highly refined play style.
 
 ### Checklist
-- **Total Cycles**: 10
+- **Total Cycles**: 0/10
 1. **Prepare Data and Backup**:
    - [ ] Move the previous self-play data to a backup folder before generating new data.
 2. **Configure Hyperparameters**:

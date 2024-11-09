@@ -68,7 +68,8 @@ class ReinforcementLearningModel:
 
     def compile_model(self):
         self.model.compile(
-            optimizer=Adam(learning_rate=util.get_learning_rate_schedule("warmup"), decay=1e-5, beta_1=0.8, beta_2=0.99),
+            optimizer=Adam(learning_rate=util.get_learning_rate_schedule("warmup"), decay=parameters.weight_decay,
+                           beta_1=parameters.adam_beta_1, beta_2=parameters.adam_beta_2),
             loss={'policy_head': 'categorical_crossentropy', 'value_head': 'mean_squared_error'},
             loss_weights={'policy_head': 1.0, 'value_head': 1.0}
         )

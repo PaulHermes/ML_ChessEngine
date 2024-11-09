@@ -13,6 +13,7 @@ import datetime
 import util
 import glob
 from concurrent.futures import ThreadPoolExecutor
+import time
 
 class SelfPlay:
     def __init__(self, model, num_games=100, random_start_probability=0.5):
@@ -41,7 +42,6 @@ class SelfPlay:
         game_data = []
 
         while not chess_board.board.is_game_over():
-            print(f"------------ Game {game_index} ------------- \n")
             nn_input = Chessboard.board_to_nn_input(chess_board.board)
             best_move = game.current_agent.get_best_move(chess_board.board, greedy=False)
             move_data = {
@@ -50,8 +50,8 @@ class SelfPlay:
                 "player": "white" if game.current_agent == white_agent else "black"
             }
             game_data.append(move_data)
+            print(f"------------ Game {game_index} ------------- \n")
             game.play_move(best_move)
-            print(f"--------------------------------------- \n")
 
         outcome = self.get_game_outcome(chess_board)
         for move in game_data:
@@ -62,10 +62,14 @@ class SelfPlay:
         self.save_data(filename=f"{self.save_folder}/self_play_data_game_{timestamp}.json")
 
     def play(self):
+        start_time = time.time()
         with ThreadPoolExecutor() as executor:
             futures = [executor.submit(self.play_game, i) for i in range(self.num_games)]
             for future in futures:
                 future.result()
+        end_time = time.time()
+        delta_time = end_time - start_time
+        print(f"Execution time for play function: {delta_time:.2f} seconds")
 
     def get_random_position(self):
         board = chess.Board()
@@ -140,10 +144,10 @@ if __name__ == '__main__':
     tf.keras.utils.disable_interactive_logging()
 
     # Run self-play games
-    num_games = 6
+    num_games = parameters.self_play_per_cycle
     self_play = SelfPlay(model, num_games, 0)
     self_play.play()
 
     # Evaluate against previous checkpoints
-    #eval_num_games = 100
+    #eval_num_games = parameters.eval_games
     #results = self_play.evaluate_against_previous_versions(eval_num_games)

@@ -9,7 +9,7 @@ import chess
 import util
 
 class TrainingPipeline:
-    def __init__(self, model, data_folder="../self_play_records", batch_size=64, epochs=10):
+    def __init__(self, model, data_folder="../self_play_records", batch_size=parameters.batch_size, epochs=10):
         self.model = model
         self.data_folder = data_folder
         self.batch_size = batch_size
