@@ -6,16 +6,16 @@ This document provides a checklist-style guide for training a Chess AI using rei
 
 ## Training Stages Overview
 
-| Stage              | Self-Play Games per Cycle | Epochs per Cycle | Batch Size | Learning Rate | MCTS Simulations per Move | AdamW Beta Values | Weight Decay |
-|--------------------|---------------------------|------------------|------------|--------------|---------------------------|-------------------|--------------|
-| **Warm-Up**        | 100                       | 5               | 64         | 0.02 → 0.2   | 75                        | β1=0.85, β2=0.98  | 1e-4         |
-| **Main Training**  | 500                       | 10              | 128        | 0.2 → 0.02   | 200                       | β1=0.9, β2=0.999  | 1e-5         |
-| **Fine-Tuning**    | 1000                      | 20              | 256        | 0.02 → 0.002 | 400                       | β1=0.9, β2=0.999  | 1e-5         |
+| Stage              | Cycles per Stage | Self-Play Games per Cycle | Epochs per Cycle | Batch Size | Learning Rate | MCTS Simulations per Move | AdamW Beta Values | Weight Decay |
+|--------------------|------------------|--------------------------|------------------|------------|--------------|---------------------------|-------------------|--------------|
+| **Warm-Up**        | 5                | 100                      | 5               | 64         | 0.02 → 0.2   | 75                        | β1=0.85, β2=0.98  | 1e-4         |
+| **Main Training**  | 10               | 300                      | 10                        | 128        | 0.2 → 0.02   | 200                       | β1=0.9, β2=0.999  | 1e-5         |
+| **Fine-Tuning**    | 10               | 500                      | 20                        | 256        | 0.02 → 0.002 | 400                       | β1=0.9, β2=0.999  | 1e-5         |
 
 ---
 
 ### Reasoning of Parameter Choices
-
+- **Cycles per Stage**: Multiple cycles for each stage so that the model can adapt better.
 - **Self-Play Games per Cycle**: Start with fewer games in the warm-up to capture basic patterns, increase for exploration in main training, and further increase for fine-tuning to capture nuanced strategies. This setup is on the lower resource side, balancing computational cost with performance.
 - **Epochs per Cycle**: Fewer epochs in the first two stages to avoid overfitting early data and more epochs in fine-tuning to refine the model’s decisions.
 - **Batch Size**: The batch size increases progressively, allowing faster adaptation in early stages and stable updates in later stages. This choice also considers computational resources.
@@ -40,6 +40,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
 **Objective**: Stabilize the model with small updates to prevent large fluctuations in early training.
 
 ### Checklist
+- **Total Cycles**: 5
 1. **Configure Hyperparameters**:
    - [ ] Set **MCTS Simulations per Move** to `75`.
    - [ ] Set **Batch Size** to `64`.
@@ -62,6 +63,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
 **Objective**: Broaden exploration and improve strategic patterns by using a high learning rate that gradually decays, along with more MCTS simulations.
 
 ### Checklist
+- **Total Cycles**: 10
 1. **Prepare Data and Backup**:
    - [ ] Move the previous self-play data to a backup folder before generating new data.
 2. **Configure Hyperparameters**:
@@ -73,7 +75,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
      - [ ] **Beta Values**: `β1=0.9`, `β2=0.999`
      - [ ] **Weight Decay**: `1e-5`
 3. **Play Self-Play Games**:
-   - [ ] Play `500` self-play games per cycle.
+   - [ ] Play `300` self-play games per cycle.
 4. **Training**:
    - [ ] Train the model with `10` epochs per cycle.
 5. **Evaluate**:
@@ -85,6 +87,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
 **Objective**: Refine and polish the model with smaller updates and more detailed evaluations, converging on a highly refined play style.
 
 ### Checklist
+- **Total Cycles**: 10
 1. **Prepare Data and Backup**:
    - [ ] Move the previous self-play data to a backup folder before generating new data.
 2. **Configure Hyperparameters**:
@@ -96,7 +99,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
      - [ ] **Beta Values**: `β1=0.9`, `β2=0.999`
      - [ ] **Weight Decay**: `1e-5`
 3. **Play Self-Play Games**:
-   - [ ] Play `1000` self-play games per cycle.
+   - [ ] Play `500` self-play games per cycle.
 4. **Training**:
    - [ ] Train the model with `20` epochs per cycle.
 5. **Evaluate**:
