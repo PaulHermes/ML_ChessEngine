@@ -1,12 +1,13 @@
 from monteCarloTreeSearch import MonteCarloTree
 import numpy as np
 import parameters
-import chess.syzygy
+import chess.gaviota
 
 #AI Agents play chess
 class Agent:
     def __init__(self, model):
         self.model = model
+        self.gaviota_path = "../gaviota/gaviota_tablebases"
 
     def get_best_move(self, board, greedy=True):
         if len(board.piece_map()) <= 5:
@@ -32,48 +33,41 @@ class Agent:
         return best_move
 
     def get_endgame_move(self, board):
-        # Check if the board is in an endgame position and use the tablebase
-        with chess.syzygy.open_tablebase('../syzygy') as tablebase:
+        with chess.gaviota.open_tablebase(self.gaviota_path) as tablebase:
             try:
-                legal_moves = list(board.legal_moves)
+                initial_dtm = tablebase.probe_dtm(board)
                 best_move = None
-                initial_dtz = tablebase.probe_dtz(board)  # Get the DTZ of the current position
-                best_dtz = initial_dtz  # Start with the current DTZ as the baseline
+                best_dtm = -initial_dtm
 
-                # Check if initial_dtz is exactly 1, then look for any move that results in a checkmate
-                if initial_dtz == 1:
-                    for move in legal_moves:
-                        board.push(move)
 
-                        # Check if the move results in checkmate
-                        if board.is_checkmate():
-                            board.pop()
-                            return move  # Return immediately since this is the best possible move
+                for move in board.legal_moves:
+                    board.push(move)
+                    try:
+                        dtm = tablebase.probe_dtm(board)  # Probe DTM (Distance-to-Mate)
+                        print(f"Move: {move}, DTM: {dtm}, best_dtm: {best_dtm}, initial_dtm: {-initial_dtm}")
 
+                        if initial_dtm > 0: # you are winning
+                            if dtm >= best_dtm and dtm != 0:
+                                best_dtm = dtm
+                                best_move = move
+                            if dtm == 0 and board.is_checkmate():
+                                best_dtm = dtm
+                                best_move = move
+                        elif initial_dtm < 0: # you are losing
+                            if dtm < best_dtm:
+                                best_dtm = dtm
+                                best_move = move
+                        else: # draw
+                            pass
+                    except chess.gaviota.MissingTableError:
+                        # Skip if the position is not found in the tablebase
+                        pass
+                    finally:
                         board.pop()
 
-                # If no mate-in-1 is found, proceed with the regular DTZ improvement check
-                for move in legal_moves:
-                    board.push(move)
-                    dtz = tablebase.probe_dtz(board)
-                    # Invert the DTZ comparison due to turn change after board.push()
-                    comparison_dtz = -initial_dtz
+                # If no optimal move was found in the tablebase, return a fallback move
+                return best_move if best_move is not None else list(board.legal_moves)[0]
 
-                    # Choose move that improves DTZ relative to the inverted initial DTZ after the move but avoid draw(cause issues with inversion)
-                    if dtz > comparison_dtz and dtz != 0:
-                        best_dtz = dtz
-                        best_move = move
-
-                    board.pop()
-
-                # If no "optimal" move found based on DTZ, fallback to the first legal move
-                if best_move is None and legal_moves:
-                    best_move = legal_moves[0]
-                    print(f"No optimal move found; using fallback first legal move: {best_move}")
-
-                print(f"Final Selected Best Move: {best_move}")
-                return best_move
-            except Exception as e:
-                print(f"Error probing tablebase: {e}")
+            except chess.gaviota.MissingTableError:
+                print("No tablebase data available for this position.")
                 return None
-

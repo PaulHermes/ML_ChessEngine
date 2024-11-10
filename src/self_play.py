@@ -20,14 +20,12 @@ class SelfPlay:
         self.model = model
         self.num_games = num_games
         self.random_start_probability = random_start_probability
-        self.data = []  # Stores game states, moves, and outcomes
         self.save_folder = "../self_play_records"
 
         if not os.path.exists(self.save_folder):
             os.makedirs(self.save_folder)
 
         util.load_latest_weights(self.model, "../checkpoints")
-
 
     def play_game(self, game_index):
         if random.random() < self.random_start_probability:
@@ -56,20 +54,27 @@ class SelfPlay:
         outcome = self.get_game_outcome(chess_board)
         for move in game_data:
             move["outcome"] = outcome
-        self.data.extend(game_data)
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        self.save_data(filename=f"{self.save_folder}/self_play_data_game_{timestamp}.json")
+        filename = f"{self.save_folder}/self_play_data_game_{game_index}_{timestamp}.json"
+        self.save_data(game_data, filename)
 
     def play(self):
         start_time = time.time()
-        with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(self.play_game, i) for i in range(self.num_games)]
-            for future in futures:
-                future.result()
+
+        # Run games in batches
+        for batch_start in range(0, self.num_games, parameters.self_play_batch_size):
+            batch_end = min(batch_start + parameters.self_play_batch_size, self.num_games)
+            print(f"Running batch {batch_start // parameters.self_play_batch_size + 1}: Games {batch_start} to {batch_end - 1}")
+
+            with ThreadPoolExecutor(max_workers=parameters.self_play_batch_size) as executor:
+                futures = [executor.submit(self.play_game, i) for i in range(batch_start, batch_end)]
+                for future in futures:
+                    future.result()  # Wait for all games in the batch to complete
+
         end_time = time.time()
         delta_time = end_time - start_time
-        print(f"Execution time for play function: {delta_time:.2f} seconds")
+        print(f"Total execution time for play function: {delta_time:.2f} seconds")
 
     def get_random_position(self):
         board = chess.Board()
@@ -80,7 +85,7 @@ class SelfPlay:
             else:
                 move = random.choice(list(board.legal_moves))
                 board.push(move)
-        return board.fen()
+        return "4k2K/8/8/8/8/8/3P1P2/8 b - - 0 1"#board.fen() "1k6/8/8/8/3QK3/8/8/8 w - - 0 1" "4k2K/8/8/8/8/8/3P1P2/8 b - - 0 1"
 
     def get_game_outcome(self, chess_board):
         result = chess_board.board.result()
@@ -91,9 +96,9 @@ class SelfPlay:
         else:
             return 0.5
 
-    def save_data(self, filename="self_play_data.json"):
+    def save_data(self, game_data, filename="self_play_data.json"):
         with open(filename, 'w') as f:
-            json.dump(self.data, f)
+            json.dump(game_data, f)
         print(f"Self-play data saved to {filename}")
 
     def evaluate_against_previous_versions(self, num_games=100):
@@ -145,7 +150,7 @@ if __name__ == '__main__':
 
     # Run self-play games
     num_games = parameters.self_play_per_cycle
-    self_play = SelfPlay(model, num_games, 0)
+    self_play = SelfPlay(model, num_games, 1)
     self_play.play()
 
     # Evaluate against previous checkpoints

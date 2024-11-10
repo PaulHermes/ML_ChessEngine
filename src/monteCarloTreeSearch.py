@@ -108,8 +108,7 @@ class MonteCarloTree:
         self.backpropagation(leaf, result)
 
     def run(self, num_simulations):
-        max_workers = os.cpu_count()
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with ThreadPoolExecutor(max_workers=32) as executor:
             futures = [executor.submit(self.run_simulation) for _ in range(num_simulations)]
             for future in futures:
                 future.result()  # Wait for all simulations to complete
