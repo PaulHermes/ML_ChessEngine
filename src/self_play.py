@@ -85,7 +85,7 @@ class SelfPlay:
             else:
                 move = random.choice(list(board.legal_moves))
                 board.push(move)
-        return "4k2K/8/8/8/8/8/3P1P2/8 b - - 0 1"#board.fen() "1k6/8/8/8/3QK3/8/8/8 w - - 0 1" "4k2K/8/8/8/8/8/3P1P2/8 b - - 0 1"
+        return board.fen() #"1k6/8/8/8/3QK3/8/8/8 w - - 0 1" "4k2K/8/8/8/8/8/3P1P2/8 b - - 0 1" "8/8/8/8/8/3k4/5R2/3K4 w - - 0 1" "K7/7k/R7/7r/8/8/8/8 w - - 0 1"
 
     def get_game_outcome(self, chess_board):
         result = chess_board.board.result()
