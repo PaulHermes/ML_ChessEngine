@@ -14,6 +14,8 @@ import util
 import glob
 from concurrent.futures import ThreadPoolExecutor
 import time
+from tensorflow.keras import mixed_precision
+
 
 class SelfPlay:
     def __init__(self, model, num_games=100, random_start_probability=0.5):
@@ -142,6 +144,10 @@ class SelfPlay:
         return results
 
 if __name__ == '__main__':
+    for gpu in tf.config.list_physical_devices('GPU'):
+        tf.config.experimental.set_memory_growth(gpu, True)
+    mixed_precision.set_global_policy('mixed_float16')
+
     model = ReinforcementLearningModel(parameters.neural_network_input, parameters.neural_network_output)
     model.build()
 

@@ -44,7 +44,6 @@ class Agent:
                     board.push(move)
                     try:
                         dtm = tablebase.probe_dtm(board)  # Probe DTM (Distance-to-Mate)
-                        print(f"Move: {move}, DTM: {dtm}, best_dtm: {best_dtm}, initial_dtm: {-initial_dtm}")
 
                         if initial_dtm > 0: # you are winning
                             if dtm >= best_dtm and dtm != 0:
