@@ -23,7 +23,7 @@ class ReinforcementLearningModel:
     # re-normalising the probabilities for remaining moves. The value head applies an additional rectified,
     # batch-normalized convolution of 1 filter of kernel size 1x1 with stride 1, followed by a rectified linear layer of size 256 and a tanh-linear layer of size 1.
     def build(self, should_plot_model: bool = False, compile_model: bool = True):
-        inputs = Input(shape=self.input_shape)
+        inputs = Input(shape=self.input_shape, dtype=tf.float16)
 
         # Initial convolutional layer (before residual blocks)
         # Standard practice is: Convolution → Batch Normalization → Activation

@@ -55,7 +55,7 @@ class MonteCarloTree:
 
         # Get outputs from neural network
         board_input = np.expand_dims(Chessboard.board_to_nn_input(node.board), axis=0)
-        policy_output, value_output = self.neural_network.model.predict(board_input, verbose=1)
+        policy_output, value_output = self.neural_network.model.predict(board_input, verbose=0)
 
         # Calculate legal moves and their probabilities
         legal_moves, legal_probs = self.probabilities_to_actions(policy_output[0], node.board)
@@ -72,7 +72,7 @@ class MonteCarloTree:
         with node.lock:
             if node.value is None:
                 board_input = np.expand_dims(Chessboard.board_to_nn_input(node.board), axis=0)
-                _, value_output = self.neural_network.model.predict(board_input, verbose=1)
+                _, value_output = self.neural_network.model.predict(board_input, verbose=0)
                 node.value = value_output[0][0]
             return node.value
 
