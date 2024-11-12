@@ -23,11 +23,12 @@ class SelfPlay:
         self.num_games = num_games
         self.random_start_probability = random_start_probability
         self.save_folder = "../self_play_records"
-
+        self.total_moves_played = 0
         if not os.path.exists(self.save_folder):
             os.makedirs(self.save_folder)
 
         util.load_latest_weights(self.model, "../checkpoints")
+
 
     def play_game(self, game_index):
         if random.random() < self.random_start_probability:
@@ -52,6 +53,11 @@ class SelfPlay:
             game_data.append(move_data)
             print(f"------------ Game {game_index} ------------- \n")
             game.play_move(best_move)
+            self.total_moves_played += 1
+            print(f"Total moves played: {self.total_moves_played}")
+            if self.total_moves_played % 25 == 0:
+                print("clearing session")
+                tf.keras.backend.clear_session()
 
         outcome = self.get_game_outcome(chess_board)
         for move in game_data:
