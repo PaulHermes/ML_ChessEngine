@@ -57,6 +57,8 @@ self_play_per_cycle = 100
 self_play_batch_size = os.cpu_count()
 
 eval_games = 100
+
+epochs = 5
 # -------------------------------------------------------------------------------
 
 # --------------------------- MCTS Parameters  -----------------

@@ -6,11 +6,11 @@ This document provides a checklist-style guide for training a Chess AI using rei
 
 ## Training Stages Overview
 
-| Stage              | Cycles per Stage | Self-Play Games per Cycle | Epochs per Cycle | Batch Size | Learning Rate | MCTS Simulations per Move | AdamW Beta Values | Weight Decay |
-|--------------------|------------------|--------------------------|------------------|------------|--------------|---------------------------|-------------------|--------------|
-| **Warm-Up**        | 5                | 100                      | 5               | 64         | 0.02 → 0.2   | 75                        | β1=0.85, β2=0.98  | 1e-4         |
-| **Main Training**  | 10               | 300                      | 10                        | 128        | 0.2 → 0.02   | 200                       | β1=0.9, β2=0.999  | 1e-5         |
-| **Fine-Tuning**    | 10               | 500                      | 20                        | 256        | 0.02 → 0.002 | 400                       | β1=0.9, β2=0.999  | 1e-5         |
+| Stage              | Cycles per Stage | Self-Play Games per Cycle | Epochs per Cycle  | Batch Size | Learning Rate | MCTS Simulations per Move | AdamW Beta Values | Weight Decay |
+|--------------------|------------------|--------------------------|-------------------|------------|--------------|---------------------------|-------------------|--------------|
+| **Warm-Up**        | 5                | 100                      | 5                 | 64         | 0.02 → 0.2   | 75                        | β1=0.85, β2=0.98  | 1e-4         |
+| **Main Training**  | 10               | 300                      | 10                | 128        | 0.2 → 0.02   | 200                       | β1=0.9, β2=0.999  | 1e-5         |
+| **Fine-Tuning**    | 10               | 500                      | 20                | 256        | 0.02 → 0.002 | 400                       | β1=0.9, β2=0.999  | 1e-5         |
 
 ---
 

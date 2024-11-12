@@ -7,9 +7,10 @@ import os
 import datetime
 import chess
 import util
+from learning_rate_scheduler import LearningRateScheduler
 
 class TrainingPipeline:
-    def __init__(self, model, data_folder="../self_play_records", batch_size=parameters.batch_size, epochs=10):
+    def __init__(self, model, data_folder="../self_play_records", batch_size=parameters.batch_size, epochs=parameters.epochs):
         self.model = model
         self.data_folder = data_folder
         self.batch_size = batch_size
@@ -51,12 +52,15 @@ class TrainingPipeline:
 
         states, policy_targets, value_targets = self.load_data()
 
+        lr_scheduler = LearningRateScheduler(stage="warmup")
+
         self.model.model.fit(
             x=states,
             y={'policy_head': policy_targets, 'value_head': value_targets},
             batch_size=self.batch_size,
             epochs=self.epochs,
-            shuffle=True
+            shuffle=True,
+            callbacks=[lr_scheduler]
         )
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
