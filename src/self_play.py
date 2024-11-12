@@ -71,17 +71,17 @@ class SelfPlay:
         start_time = time.time()
 
         # Run games in batches
-        #for batch_start in range(0, self.num_games, parameters.self_play_batch_size):
-            #batch_end = min(batch_start + parameters.self_play_batch_size, self.num_games)
-            #print(f"Running batch {batch_start // parameters.self_play_batch_size + 1}: Games {batch_start} to {batch_end - 1}")
+        for batch_start in range(0, self.num_games, parameters.self_play_batch_size):
+            batch_end = min(batch_start + parameters.self_play_batch_size, self.num_games)
+            print(f"Running batch {batch_start // parameters.self_play_batch_size + 1}: Games {batch_start} to {batch_end - 1}")
 
-            #with ThreadPoolExecutor(max_workers=parameters.self_play_batch_size) as executor:
-                #futures = [executor.submit(self.play_game, i) for i in range(batch_start, batch_end)]
-                #for future in futures:
-                    #future.result()  # Wait for all games in the batch to complete
+            with ThreadPoolExecutor(max_workers=parameters.self_play_batch_size) as executor:
+                futures = [executor.submit(self.play_game, i) for i in range(batch_start, batch_end)]
+                for future in futures:
+                    future.result()  # Wait for all games in the batch to complete
 
-        for i in range(self.num_games):
-            self.play_game(i)
+        #for i in range(self.num_games):
+            #self.play_game(i)
 
         end_time = time.time()
         delta_time = end_time - start_time
