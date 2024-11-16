@@ -43,9 +43,6 @@ class MonteCarloTree:
             raise ValueError("Root node is None")
         while node.is_fully_expanded() and node.children:
             node = self.best_uct(node)
-            if node is None:
-                raise ValueError(
-                    "best_uct returned None, which indicates an issue in tree structure or UCT calculation.")
 
         return node
 
@@ -89,7 +86,8 @@ class MonteCarloTree:
         for child in node.children:
             if child.visits == 0:
                 return child  # Prioritize unexplored nodes
-
+            if np.isnan(child.wins):
+                child.wins = 0
             uct_value = (child.wins / child.visits) + c * child.prior_prob * (sqrt_visits / (1 + child.visits))
             if uct_value > best_value:
                 best_value = uct_value

@@ -35,36 +35,29 @@ class ReinforcementLearningModel:
         for _ in range(self.residual_blocks):
             x = self.residual_block(x)
 
-            # Policy Head
-            x_policy = layers.Conv2D(filters=self.convolutional_filters, kernel_size=self.kernel_size,
-                                     strides=self.stride, padding='same')(x)
-            x_policy = layers.BatchNormalization()(x_policy)
-            x_policy = layers.Activation('relu')(x_policy)
-
-            policy_head = layers.Conv2D(filters=parameters.possible_moves, kernel_size=(1, 1), strides=1, padding='same')(x_policy)
-            policy_output = layers.Flatten()(policy_head)
-            policy_output = layers.Dense(self.output_shape[0],activation='softmax', name='policy_head')(policy_output)
-
-            # Value Head
-            x_value = layers.Conv2D(filters=1, kernel_size=(1, 1), strides=1, padding='same')(x)
-            x_value = layers.BatchNormalization()(x_value)
-            x_value = layers.Activation('relu')(x_value)
-
-            # Flatten and apply dense layers
-            x_value = layers.Flatten()(x_value)
-            x_value = layers.Dense(256, activation='relu')(x_value)
-
-            # Final dense layer with tanh activation for the value output
-            value_output = layers.Dense(1, activation='tanh', name='value_head')(x_value)
-
-            # Create the model
-            self.model = models.Model(inputs=inputs, outputs=[policy_output, value_output])
-
-            if compile_model:
-                self.compile_model()
-
-            if should_plot_model:
-                tf.keras.utils.plot_model(self.model, to_file='images/model.png', show_shapes=True, show_layer_names=True)
+        # Policy Head
+        x_policy = layers.Conv2D(filters=self.convolutional_filters, kernel_size=self.kernel_size,
+                                 strides=self.stride, padding='same')(x)
+        x_policy = layers.BatchNormalization()(x_policy)
+        x_policy = layers.Activation('relu')(x_policy)
+        policy_head = layers.Conv2D(filters=parameters.possible_moves, kernel_size=(1, 1), strides=1, padding='same')(x_policy)
+        policy_output = layers.Flatten()(policy_head)
+        policy_output = layers.Dense(self.output_shape[0],activation='softmax', name='policy_head')(policy_output)
+        # Value Head
+        x_value = layers.Conv2D(filters=1, kernel_size=(1, 1), strides=1, padding='same')(x)
+        x_value = layers.BatchNormalization()(x_value)
+        x_value = layers.Activation('relu')(x_value)
+        # Flatten and apply dense layers
+        x_value = layers.Flatten()(x_value)
+        x_value = layers.Dense(256, activation='relu')(x_value)
+        # Final dense layer with tanh activation for the value output
+        value_output = layers.Dense(1, activation='tanh', name='value_head')(x_value)
+        # Create the model
+        self.model = models.Model(inputs=inputs, outputs=[policy_output, value_output])
+        if compile_model:
+            self.compile_model()
+        if should_plot_model:
+            tf.keras.utils.plot_model(self.model, to_file='../images/model.png', show_shapes=True, show_layer_names=True)
 
     def compile_model(self):
         self.model.compile(

@@ -29,7 +29,7 @@ class LearningRateScheduler(Callback):
     def get_learning_rate_schedule(self, stage):
         if stage == "warmup":
             initial_lr = 0.02
-            target_lr = 0.2
+            target_lr = 0.03
             epochs_to_increase = 25  # Total epochs for warm-up stage
 
             def warmup_schedule(epoch):
