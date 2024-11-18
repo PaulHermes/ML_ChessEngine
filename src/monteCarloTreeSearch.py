@@ -120,3 +120,45 @@ class MonteCarloTree:
 
     def move_to_index(self, move):
         return move.from_square * 64 + move.to_square
+
+    def visualize_mcts_tree(self, max_depth=3, filename="mcts_tree"):
+        import graphviz
+        from queue import Queue
+
+        dot = graphviz.Digraph(format='pdf')
+        dot.attr(rankdir='TB')  # Set higher DPI and larger size
+
+        # Add nodes and edges to the graph
+        queue = Queue()
+        queue.put((self.root, 0))  # Start with (node, depth) as (root_node, 0)
+
+        while not queue.empty():
+            node, depth = queue.get()
+
+            if depth > max_depth:
+                continue
+
+            # Create a label for the current node
+            label = f"Visits: {node.visits}\nWins: {node.wins:.2f}\nMove: {node.move}"
+            dot.node(
+                str(id(node)),
+                label,
+                shape='box',
+                fontsize='12',  # Larger font size
+                margin='0.2',
+            )
+
+            if node.parent:
+                dot.edge(
+                    str(id(node.parent)),
+                    str(id(node)),
+                    penwidth='2',  # Thicker edge lines
+                )
+
+            # Add children to the queue with incremented depth
+            for child in node.children:
+                queue.put((child, depth + 1))
+
+        # Render the tree to a file
+        dot.render(filename, cleanup=True)
+        print(f"MCTS tree visualization saved to {filename}.png")
