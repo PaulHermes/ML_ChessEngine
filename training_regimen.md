@@ -40,7 +40,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
 **Objective**: Stabilize the model with small updates to prevent large fluctuations in early training.
 
 ### Checklist
-- **Total Cycles**: 4/5
+- **Total Cycles**: 5/5
 1. **Configure Hyperparameters**:
    - [X] Set **MCTS Simulations per Move** to `75`.
    - [X] Set **Batch Size** to `64`.
@@ -49,9 +49,9 @@ This document provides a checklist-style guide for training a Chess AI using rei
      - [X] **Beta Values**: `β1=0.85`, `β2=0.98`
      - [X] **Weight Decay**: `1e-4`
 2. **Play Self-Play Games**:
-   - [ ] Play `100` self-play games per cycle.
+   - [X] Play `100` self-play games per cycle.
 3. **Training**:
-   - [ ] Train the model with `5` epochs per cycle.
+   - [X] Train the model with `5` epochs per cycle.
 4. **Evaluate**:
    - [ ] Evaluate against previous checkpoints.
 
@@ -64,14 +64,14 @@ This document provides a checklist-style guide for training a Chess AI using rei
 ### Checklist
 - **Total Cycles**: 0/10
 1. **Prepare Data and Backup**:
-   - [ ] Move the previous self-play data to a backup folder before generating new data.
+   - [X] Move the previous self-play data to a backup folder before generating new data.
 2. **Configure Hyperparameters**:
-   - [ ] Increase **MCTS Simulations per Move** to `200`.
-   - [ ] Set **Batch Size** to `128`.
-   - [ ] Change **Learning Rate Schedule** Main. 
-   - [ ] Use **AdamW Optimizer** with the following settings:
-     - [ ] **Beta Values**: `β1=0.9`, `β2=0.999`
-     - [ ] **Weight Decay**: `1e-5`
+   - [X] Increase **MCTS Simulations per Move** to `200`.
+   - [X] Set **Batch Size** to `128`.
+   - [X] Change **Learning Rate Schedule** Main. 
+   - [X] Use **AdamW Optimizer** with the following settings:
+     - [X] **Beta Values**: `β1=0.9`, `β2=0.999`
+     - [X] **Weight Decay**: `1e-5`
 3. **Play Self-Play Games**:
    - [ ] Play `300` self-play games per cycle.
 4. **Training**:

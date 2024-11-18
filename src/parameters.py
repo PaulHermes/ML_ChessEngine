@@ -46,14 +46,14 @@ kernel_size = 3
 
 stride = 1
 
-batch_size = 64
+batch_size = 128
 
-adam_beta_1 = 0.85
-adam_beta_2 = 0.98
+adam_beta_1 = 0.9
+adam_beta_2 = 0.999
 
-weight_decay = 1e-4
+weight_decay = 1e-5
 
-self_play_per_cycle = 100
+self_play_per_cycle = 300
 self_play_batch_size = os.cpu_count()
 
 eval_games = 100
@@ -65,7 +65,7 @@ epochs = 5
 
 # https://arxiv.org/pdf/1712.01815 Page 14
 
-number_of_simulations = 75
+number_of_simulations = 200
 # -------------------------------------------------------------------------------
 
 
