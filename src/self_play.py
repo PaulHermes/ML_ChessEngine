@@ -178,8 +178,8 @@ if __name__ == '__main__':
     # Run self-play games
     num_games = parameters.self_play_per_cycle
     self_play = SelfPlay(model, num_games, 0)
-    #self_play.play()
+    self_play.play()
 
     # Evaluate against previous checkpoints
-    eval_num_games = parameters.eval_games
-    results = self_play.evaluate_against_previous_versions(eval_num_games)
+    #eval_num_games = parameters.eval_games
+    #results = self_play.evaluate_against_previous_versions(eval_num_games)
