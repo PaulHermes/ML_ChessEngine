@@ -51,12 +51,12 @@ class SelfPlay:
                 "player": "white" if game.current_agent == white_agent else "black"
             }
             game_data.append(move_data)
-            print(f"------------ Game {game_index} ------------- \n")
+            #print(f"------------ Game {game_index} ------------- \n")
             game.play_move(best_move)
             self.total_moves_played += 1
-            print(f"Total moves played: {self.total_moves_played}")
+            #print(f"Total moves played: {self.total_moves_played}")
             if self.total_moves_played % 25 == 0:
-                print("clearing session")
+                #print("clearing session")
                 tf.keras.backend.clear_session()
 
         outcome = self.get_game_outcome(chess_board)
@@ -109,13 +109,13 @@ class SelfPlay:
 
     def evaluate_against_previous_versions(self, num_games=100):
         checkpoint_folder = "../checkpoints"
-        checkpoints = sorted(glob.glob(f"{checkpoint_folder}/model_weights_cycle_*.h5"), key=os.path.getctime)
+        checkpoints = sorted(glob.glob(f"{checkpoint_folder}/*weights.h5"), key=os.path.getctime)
 
         results = {}
 
-        # For each previous checkpoint, evaluate the latest model against it
-        for i, checkpoint in enumerate(checkpoints[:-1]):
+        def evaluate_checkpoint(checkpoint):
             print(f"\n--- Evaluating against checkpoint {checkpoint} ---")
+            start_time = time.time()
             opponent_model = ReinforcementLearningModel(parameters.neural_network_input,
                                                         parameters.neural_network_output)
             opponent_model.build(compile_model=False)
@@ -123,18 +123,26 @@ class SelfPlay:
 
             wins, losses, draws = 0, 0, 0
 
-            for _ in range(num_games):
+            def play_single_game():
                 chess_board = Chessboard()
                 white_agent = Agent(self.model)
                 black_agent = Agent(opponent_model)
-
                 game = Game(chess_board, white_agent, black_agent)
 
                 while not chess_board.board.is_game_over():
                     best_move = game.current_agent.get_best_move(chess_board.board, greedy=True)
+                    print(checkpoint, best_move)
                     game.play_move(best_move)
+                    self.total_moves_played += 1
+                    if self.total_moves_played % 25 == 0:
+                        tf.keras.backend.clear_session()
 
-                outcome = self.get_game_outcome(chess_board)
+                return self.get_game_outcome(chess_board)
+
+            with ThreadPoolExecutor() as executor:
+                outcomes = list(executor.map(lambda _: play_single_game(), range(num_games)))
+
+            for outcome in outcomes:
                 if outcome == 1:
                     wins += 1
                 elif outcome == 0:
@@ -142,8 +150,17 @@ class SelfPlay:
                 else:
                     draws += 1
 
-            results[checkpoint] = {"wins": wins, "losses": losses, "draws": draws}
+            end_time = time.time()
+            delta_time = end_time - start_time
+            print(f"Execution time for checkpoint {checkpoint}: {delta_time:.2f} seconds")
             print(f"Results against {checkpoint}: {wins} wins, {losses} losses, {draws} draws")
+            return checkpoint, {"wins": wins, "losses": losses, "draws": draws}
+
+        with ThreadPoolExecutor(max_workers=parameters.self_play_batch_size) as executor:
+            future_results = [executor.submit(evaluate_checkpoint, checkpoint) for checkpoint in checkpoints[:-1]]
+            for future in future_results:
+                checkpoint, result = future.result()
+                results[checkpoint] = result
 
         return results
 
@@ -160,9 +177,9 @@ if __name__ == '__main__':
 
     # Run self-play games
     num_games = parameters.self_play_per_cycle
-    self_play = SelfPlay(model, num_games, 0.65)
-    self_play.play()
+    self_play = SelfPlay(model, num_games, 0)
+    #self_play.play()
 
     # Evaluate against previous checkpoints
-    #eval_num_games = parameters.eval_games
-    #results = self_play.evaluate_against_previous_versions(eval_num_games)
+    eval_num_games = parameters.eval_games
+    results = self_play.evaluate_against_previous_versions(eval_num_games)
