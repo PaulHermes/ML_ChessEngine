@@ -12,7 +12,7 @@ from chessboard import Chessboard
 
 
 class BatchTesting:
-    def __init__(self, model: ReinforcementLearningModel, num_models=3):
+    def __init__(self, model: ReinforcementLearningModel, num_models=1):
         # Initialize multiple models
         self.models = [model] + [
             ReinforcementLearningModel(parameters.neural_network_input, parameters.neural_network_output)
@@ -95,9 +95,9 @@ if __name__ == '__main__':
     mixed_precision.set_global_policy('mixed_float16')
 
     model = ReinforcementLearningModel(parameters.neural_network_input, parameters.neural_network_output)
-    tester = BatchTesting(model, num_models=10)
+    tester = BatchTesting(model, num_models=1)
 
     #tester.run_test("threading")
     #tester.run_test("sequential")
-    #tester.run_test("batched")
-    tester.run_test("multi")
+    tester.run_test("batched")
+    #tester.run_test("multi")
