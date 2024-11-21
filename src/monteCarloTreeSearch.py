@@ -3,6 +3,7 @@ import numpy as np
 import chess
 from reinforcementLearningModel import ReinforcementLearningModel
 from chessboard import Chessboard
+from predictionManager import PredictionManager
 
 
 class MonteCarloTreeNode:
@@ -32,48 +33,22 @@ class MonteCarloTreeNode:
         return child_node
 
 
+import numpy as np
+from chessboard import Chessboard  # Replace with your board input converter
+
+
 class MonteCarloTree:
-    def __init__(self, board: chess.Board, neural_network: ReinforcementLearningModel, batch_size=16):
+    def __init__(self, board: chess.Board, neural_network, batch_size=16):
         self.root = MonteCarloTreeNode(board)
-        self.neural_network = neural_network
-        self.batch_size = batch_size
-        self.prediction_queue = []
-        self.prediction_results = {}
+        self.prediction_manager = PredictionManager()
+        self.prediction_manager.set_neural_network(neural_network)
 
     def enqueue_prediction(self, node):
         board_input = Chessboard.board_to_nn_input(node.board)
-        self.prediction_queue.append((node, board_input))
-
-        # Trigger batch prediction if queue size reaches the batch size
-        if len(self.prediction_queue) >= self.batch_size:
-            self.process_prediction_queue()
-
-    def process_prediction_queue(self):
-        if not self.prediction_queue:
-            return
-
-        # Prepare batch input
-        nodes, board_inputs = zip(*self.prediction_queue)
-        board_inputs = np.array(board_inputs)
-
-
-        print(board_inputs.shape)
-        # Perform batch prediction
-        policy_outputs, value_outputs = self.neural_network.model.predict(board_inputs, verbose=0)
-
-        # Store predictions in results and assign them to nodes
-        for i, node in enumerate(nodes):
-            policy_output = policy_outputs[i]
-            value_output = value_outputs[i][0]
-            self.prediction_results[node] = (policy_output, value_output)
-
-        # Clear the queue
-        self.prediction_queue = []
+        self.prediction_manager.enqueue_prediction(node, board_input)
 
     def get_predictions_for_node(self, node):
-        if node in self.prediction_results:
-            return self.prediction_results.pop(node)
-        return None
+        return self.prediction_manager.get_predictions_for_node(node)
 
     def selection(self):
         node = self.root
@@ -103,15 +78,11 @@ class MonteCarloTree:
     def simulation(self, node):
         # Ensure predictions for the node are available
         while node.value is None:
-            self.process_prediction_queue()  # Process any queued predictions
+            self.prediction_manager.process_prediction_queue()  # Process any queued predictions
             predictions = self.get_predictions_for_node(node)
             if predictions is not None:
                 _, value_output = predictions
                 node.value = value_output
-
-        # Ensure node.value is not None
-        if node.value is None:
-            raise ValueError("Simulation failed: node.value is still None after prediction.")
 
         return node.value
 
@@ -135,6 +106,7 @@ class MonteCarloTree:
                 best_value = uct_value
                 best_node = child
         return best_node
+
     def probabilities_to_actions(self, policy_output, board):
         legal_moves = list(board.legal_moves)
         legal_probs = np.array([policy_output[self.move_to_index(move)] for move in legal_moves])
@@ -156,13 +128,9 @@ class MonteCarloTree:
 
     def run(self, num_simulations):
         for _ in range(num_simulations):
-            leaf = self.selection()
-            self.expansion(leaf)
-            result = self.simulation(leaf)
-            self.backpropagation(leaf, result)
+            self.run_simulation()
         # Ensure all queued predictions are processed at the end
-        self.process_prediction_queue()
-
+        self.prediction_manager.process_prediction_queue()
 
     def visualize_mcts_tree(self, max_depth=3, filename="mcts_tree"):
         import graphviz
@@ -204,4 +172,5 @@ class MonteCarloTree:
 
         # Render the tree to a file
         dot.render(filename, cleanup=True)
-        print(f"MCTS tree visualization saved to {filename}.png")
+        print(f"MCTS tree visualization saved to {filename}.pdf")
+
