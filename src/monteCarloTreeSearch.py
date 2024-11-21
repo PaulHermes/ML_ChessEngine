@@ -1,4 +1,5 @@
 import os
+from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 import chess
 from reinforcementLearningModel import ReinforcementLearningModel
@@ -33,12 +34,8 @@ class MonteCarloTreeNode:
         return child_node
 
 
-import numpy as np
-from chessboard import Chessboard  # Replace with your board input converter
-
-
 class MonteCarloTree:
-    def __init__(self, board: chess.Board, neural_network, batch_size=16):
+    def __init__(self, board: chess.Board, neural_network):
         self.root = MonteCarloTreeNode(board)
         self.prediction_manager = PredictionManager()
         self.prediction_manager.set_neural_network(neural_network)
@@ -63,7 +60,7 @@ class MonteCarloTree:
         # Enqueue prediction for the current node
         self.enqueue_prediction(node)
 
-        # Check if predictions are ready for the node
+        # Block until predictions are ready for the node
         predictions = self.get_predictions_for_node(node)
         if predictions is not None:
             policy_output, value_output = predictions
@@ -78,7 +75,6 @@ class MonteCarloTree:
     def simulation(self, node):
         # Ensure predictions for the node are available
         while node.value is None:
-            self.prediction_manager.process_prediction_queue()  # Process any queued predictions
             predictions = self.get_predictions_for_node(node)
             if predictions is not None:
                 _, value_output = predictions
@@ -127,10 +123,10 @@ class MonteCarloTree:
         self.backpropagation(leaf, result)
 
     def run(self, num_simulations):
-        for _ in range(num_simulations):
-            self.run_simulation()
-        # Ensure all queued predictions are processed at the end
-        self.prediction_manager.process_prediction_queue()
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(self.run_simulation) for _ in range(num_simulations)]
+            for future in futures:
+                future.result()
 
     def visualize_mcts_tree(self, max_depth=3, filename="mcts_tree"):
         import graphviz

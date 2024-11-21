@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1b697f9-be95-4855-b393-4953656cf0d0" name="Changes" comment="Self_play now with ThreadPoolExecutor&#10;after installing cuda processPool created some issues so im swapping to threadPoolExecutor for now.">
+    <list default="true" id="c1b697f9-be95-4855-b393-4953656cf0d0" name="Changes" comment="centralized queue">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/monteCarloTreeSearch.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/monteCarloTreeSearch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/parameters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/self_play.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/self_play.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/predictionManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/predictionManager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +24,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -38,8 +39,13 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.agent.executor": "Run",
+    "Python.batch_predictor.executor": "Run",
+    "Python.batch_testing.executor": "Run",
+    "Python.game_interface.executor": "Run",
     "Python.main.executor": "Run",
-    "Python.monteCarloTreeSearch.executor": "Debug",
+    "Python.monteCarloTreeSearch.executor": "Run",
+    "Python.parameters.executor": "Run",
+    "Python.predictionManager.executor": "Run",
     "Python.reinforcementLearningModel.executor": "Run",
     "Python.self_play.executor": "Run",
     "Python.training_pipeline.executor": "Run",
@@ -47,12 +53,17 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "com.codeium.enabled": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Infin/Documents/Python/axi-game-engine",
+    "last_opened_file_path": "C:/Users/Infin/Documents/Python/ML_ChessEngine/checkpoints",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Infin\Documents\Python\ML_ChessEngine\checkpoints" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Infin\Documents\Python\ML_ChessEngine\checkpoints" />
+      <recent name="C:\Users\Infin\Documents\Python\ML_ChessEngine\epoch_tracking" />
       <recent name="C:\Users\Infin\Documents\Python\ML_ChessEngine\src" />
     </key>
   </component>
@@ -184,7 +195,111 @@
       <option name="project" value="LOCAL" />
       <updated>1730823605148</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="more small improvements. still crashes sometimes">
+      <option name="closed" value="true" />
+      <created>1731297115008</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1731297115008</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Ram fix&#10;might be worth thinking about not threading the games itself and just threading mcts. that way i can stop whenever and not lose a batch of progress.">
+      <option name="closed" value="true" />
+      <created>1731422776471</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1731422776471</updated>
+    </task>
+    <task id="LOCAL-00014" summary="LR scheduler works over multiple cycles now&#10;self-play non threading for better me experience :)&#10;first round of training worked well i think">
+      <option name="closed" value="true" />
+      <created>1731426439114</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1731426439114</updated>
+    </task>
+    <task id="LOCAL-00015" summary="trying threading the games instead of mcts since some issues happened due to threading">
+      <option name="closed" value="true" />
+      <created>1731441651112</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1731441651112</updated>
+    </task>
+    <task id="LOCAL-00016" summary="no more game batching cause the parallelism comes from games now">
+      <option name="closed" value="true" />
+      <created>1731442631832</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1731442631832</updated>
+    </task>
+    <task id="LOCAL-00017" summary="model build indentation was very off, fixed now. also some mcts checks to avoid nan with weird weight shananigans, i assume this might be float16 stuff so i might swtich to float32 for later stages but for now it shouldnt matter">
+      <option name="closed" value="true" />
+      <created>1731716245863</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1731716245863</updated>
+    </task>
+    <task id="LOCAL-00018" summary="regimen updates">
+      <option name="closed" value="true" />
+      <created>1731817938954</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1731817938954</updated>
+    </task>
+    <task id="LOCAL-00019" summary="parameter for main">
+      <option name="closed" value="true" />
+      <created>1731900613479</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1731900613479</updated>
+    </task>
+    <task id="LOCAL-00020" summary="visualize mcts tree as pdf">
+      <option name="closed" value="true" />
+      <created>1731903943980</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1731903943980</updated>
+    </task>
+    <task id="LOCAL-00021" summary="successfully self played">
+      <option name="closed" value="true" />
+      <created>1732031798980</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1732031798980</updated>
+    </task>
+    <task id="LOCAL-00022" summary="tested ways to improve runtime">
+      <option name="closed" value="true" />
+      <created>1732042475747</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1732042475747</updated>
+    </task>
+    <task id="LOCAL-00023" summary="first version of batching queue&#10;currently this only batches multiple ones if available and its limited to mcts instance. will create seperate overarching class for this and then maybe add a threshhold. will see">
+      <option name="closed" value="true" />
+      <created>1732139286845</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1732139286845</updated>
+    </task>
+    <task id="LOCAL-00024" summary="centralized queue">
+      <option name="closed" value="true" />
+      <created>1732152770497</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1732152770497</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -199,6 +314,19 @@
     <MESSAGE value="Evaluation via Self Play implemented&#10;might look also look into using the lichess library but for now this is definitely enough to see progress" />
     <MESSAGE value="Self_play multithreading" />
     <MESSAGE value="Self_play now with ThreadPoolExecutor&#10;after installing cuda processPool created some issues so im swapping to threadPoolExecutor for now." />
-    <option name="LAST_COMMIT_MESSAGE" value="Self_play now with ThreadPoolExecutor&#10;after installing cuda processPool created some issues so im swapping to threadPoolExecutor for now." />
+    <MESSAGE value="more small improvements. still crashes sometimes" />
+    <MESSAGE value="Ram fix&#10;might be worth thinking about not threading the games itself and just threading mcts. that way i can stop whenever and not lose a batch of progress." />
+    <MESSAGE value="LR scheduler works over multiple cycles now&#10;self-play non threading for better me experience :)&#10;first round of training worked well i think" />
+    <MESSAGE value="trying threading the games instead of mcts since some issues happened due to threading" />
+    <MESSAGE value="no more game batching cause the parallelism comes from games now" />
+    <MESSAGE value="model build indentation was very off, fixed now. also some mcts checks to avoid nan with weird weight shananigans, i assume this might be float16 stuff so i might swtich to float32 for later stages but for now it shouldnt matter" />
+    <MESSAGE value="regimen updates" />
+    <MESSAGE value="parameter for main" />
+    <MESSAGE value="visualize mcts tree as pdf" />
+    <MESSAGE value="successfully self played" />
+    <MESSAGE value="tested ways to improve runtime" />
+    <MESSAGE value="first version of batching queue&#10;currently this only batches multiple ones if available and its limited to mcts instance. will create seperate overarching class for this and then maybe add a threshhold. will see" />
+    <MESSAGE value="centralized queue" />
+    <option name="LAST_COMMIT_MESSAGE" value="centralized queue" />
   </component>
 </project>
