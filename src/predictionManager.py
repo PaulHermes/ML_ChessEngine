@@ -71,10 +71,5 @@ class PredictionManager:
         """Retrieve predictions for a specific node."""
         with self.queue_condition:
             while node not in self.prediction_results:
-                self.queue_condition.wait(timeout)  # Wait for a signal or timeout
-
-                # Check if predictions are still not available
-                if node not in self.prediction_results:
-                    raise TimeoutError(f"Prediction for node {node} not available within {timeout} seconds.")
-
-            return self.prediction_results.pop(node, None)
+                self.queue_condition.wait()  # Wait for a signal or timeout
+            return self.prediction_results[node]
