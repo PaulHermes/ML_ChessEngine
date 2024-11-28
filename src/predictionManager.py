@@ -18,7 +18,7 @@ class PredictionManager:
         self.prediction_queue = []  # Shared queue
         self.prediction_results = {}
         self.neural_network = None  # To be set explicitly
-        self.batch_size = 512
+        self.batch_size = 24
         self.queue_condition = Condition()
 
     def set_neural_network(self, neural_network):
@@ -67,7 +67,7 @@ class PredictionManager:
             # Notify waiting threads that predictions are ready
             self.queue_condition.notify_all()
 
-    def get_predictions_for_node(self, node, timeout=5):
+    def get_predictions_for_node(self, node):
         """Retrieve predictions for a specific node."""
         with self.queue_condition:
             while node not in self.prediction_results:
