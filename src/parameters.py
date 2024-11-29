@@ -66,6 +66,10 @@ epochs = 5
 # https://arxiv.org/pdf/1712.01815 Page 14
 
 number_of_simulations = 200
+
+prediction_batch_size = 16
+
+use_prediction_batching = False
 # -------------------------------------------------------------------------------
 
 

@@ -6,6 +6,7 @@ import chess
 from reinforcementLearningModel import ReinforcementLearningModel
 from chessboard import Chessboard
 from predictionManager import PredictionManager
+import parameters
 
 
 class MonteCarloTreeNode:
@@ -41,15 +42,21 @@ class MonteCarloTree:
     def __init__(self, board: chess.Board, neural_network):
         self.root = MonteCarloTreeNode(board)
         self.prediction_manager = PredictionManager()
+        self.neural_network = neural_network
         self.prediction_manager.set_neural_network(neural_network)
         self.lock = Lock()
 
     def enqueue_prediction(self, node):
-        board_input = Chessboard.board_to_nn_input(node.board)
-        self.prediction_manager.enqueue_prediction(node, board_input)
+        if parameters.use_prediction_batching:
+            board_input = Chessboard.board_to_nn_input(node.board)
+            self.prediction_manager.enqueue_prediction(node, board_input)
 
     def get_predictions_for_node(self, node):
-        return self.prediction_manager.get_predictions_for_node(node)
+        if parameters.use_prediction_batching:
+            return self.prediction_manager.get_predictions_for_node(node)
+        else:
+            board_input = np.expand_dims(Chessboard.board_to_nn_input(node.board),axis=0)
+            return self.neural_network.model.predict(board_input, verbose=1)
 
     def selection(self):
         with self.lock:
@@ -70,8 +77,10 @@ class MonteCarloTree:
             predictions = self.get_predictions_for_node(node)
             if predictions is not None:
                 policy_output, value_output = predictions
+                if not parameters.use_prediction_batching:
+                    policy_output = policy_output[0]
+                    value_output = value_output[0]
                 legal_moves, legal_probs = self.probabilities_to_actions(policy_output, node.board)
-
                 # Expand children with calculated probabilities
                 for move, prob in zip(legal_moves, legal_probs):
                     node.expand(move, prob)

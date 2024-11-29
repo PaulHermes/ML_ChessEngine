@@ -2,7 +2,7 @@ import threading
 import time
 import numpy as np
 from threading import Lock, Condition
-
+import parameters
 
 class PredictionManager:
     _instance = None
@@ -20,13 +20,14 @@ class PredictionManager:
         self.prediction_queue = []  # Shared queue
         self.prediction_results = {}
         self.neural_network = None  # To be set explicitly
-        self.batch_size = 16
+        self.batch_size = parameters.prediction_batch_size
         self.queue_condition = Condition()
         self.last_enqueue = None
 
-        # Start worker thread
-        worker_thread = threading.Thread(target=self.worker, daemon=True)
-        worker_thread.start()
+        if parameters.use_prediction_batching:
+            # Start worker thread
+            worker_thread = threading.Thread(target=self.worker, daemon=True)
+            worker_thread.start()
 
     def worker(self):
         while True:
