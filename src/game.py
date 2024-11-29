@@ -15,7 +15,7 @@ class Game:
         self.chessBoard.reset()
 
     def play_move(self, move: chess.Move):
-        #print("\n" + str(move))
+        print("\n" + str(move))
 
         self.chessBoard.move_piece(move)
         self.current_agent = self.black if self.current_agent == self.white else self.white

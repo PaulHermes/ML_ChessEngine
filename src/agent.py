@@ -27,9 +27,9 @@ class Agent:
             best_move = selected_child.move
 
         # Print for debugging
-        print("\n")
-        for child in mcts.root.children:
-            print(str(child.move) + " | " + str(child.visits) + " | " + str(child.wins))
+        #print("\n")
+        #for child in mcts.root.children:
+            #print(str(child.move) + " | " + str(child.visits) + " | " + str(child.wins))
         return best_move
 
     def get_endgame_move(self, board):

@@ -85,7 +85,7 @@ class MonteCarloTree:
             if predictions is not None:
                 _, value_output = predictions
                 node.value = value_output
-
+        self.prediction_manager.remove_node(node)
         return node.value
 
     def backpropagation(self, node, result):

@@ -1,3 +1,5 @@
+import threading
+import time
 import numpy as np
 from threading import Lock, Condition
 
@@ -18,8 +20,20 @@ class PredictionManager:
         self.prediction_queue = []  # Shared queue
         self.prediction_results = {}
         self.neural_network = None  # To be set explicitly
-        self.batch_size = 24
+        self.batch_size = 16
         self.queue_condition = Condition()
+        self.last_enqueue = None
+
+        # Start worker thread
+        worker_thread = threading.Thread(target=self.worker, daemon=True)
+        worker_thread.start()
+
+    def worker(self):
+        while True:
+            if self.last_enqueue is not None and len(self.prediction_queue) > 0 and time.time() - self.last_enqueue > 20:
+                print(f"No new predictions for 20 seconds. Processing queue of length {len(self.prediction_queue)}")
+                self.process_prediction_queue()
+            time.sleep(1)
 
     def set_neural_network(self, neural_network):
         """Set the shared neural network for predictions."""
@@ -29,11 +43,12 @@ class PredictionManager:
         """Add a node and its board input to the shared queue."""
         with self.queue_condition:
             self.prediction_queue.append((node, board_input))
-            print(f"Queue size: {len(self.prediction_queue)}")
+            self.last_enqueue = time.time()
+            #print(f"Queue size: {len(self.prediction_queue)}")
 
             # Trigger batch processing if the batch size is reached
             if len(self.prediction_queue) >= self.batch_size:
-                print("Batch size reached. Processing queue.")
+                #print("Batch size reached. Processing queue.")
                 self.process_prediction_queue()
             else:
                 self.queue_condition.notify_all()  # Notify waiting threads
@@ -52,8 +67,8 @@ class PredictionManager:
             board_inputs = np.array(board_inputs)
 
             # Perform batch prediction
-            print(f"Processing batch of size {process_count}.")
-            policy_outputs, value_outputs = self.neural_network.model.predict(board_inputs, verbose=1)
+            #print(f"Processing batch of size {process_count}.")
+            policy_outputs, value_outputs = self.neural_network.model.predict(board_inputs, verbose=0)
 
             # Store results for each node
             for i, node in enumerate(nodes):
@@ -73,3 +88,8 @@ class PredictionManager:
             while node not in self.prediction_results:
                 self.queue_condition.wait()  # Wait for a signal or timeout
             return self.prediction_results[node]
+
+    def remove_node(self, node):
+        with self.queue_condition:
+            if node in self.prediction_results:
+                del self.prediction_results[node]

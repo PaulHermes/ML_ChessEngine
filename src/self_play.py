@@ -12,7 +12,7 @@ import chess
 import datetime
 import util
 import glob
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 from tensorflow.keras import mixed_precision
 
@@ -54,9 +54,8 @@ class SelfPlay:
             #print(f"------------ Game {game_index} ------------- \n")
             game.play_move(best_move)
             self.total_moves_played += 1
-            #print(f"Total moves played: {self.total_moves_played}")
             if self.total_moves_played % 25 == 0:
-                #print("clearing session")
+                print("clearing session")
                 tf.keras.backend.clear_session()
 
         outcome = self.get_game_outcome(chess_board)
@@ -71,8 +70,18 @@ class SelfPlay:
         start_time = time.time()
 
         with ThreadPoolExecutor(max_workers=parameters.self_play_batch_size) as executor:
-            futures = [executor.submit(self.play_game, i) for i in range(self.num_games)]
-            for future in futures:
+            futures = []
+            for i in range(self.num_games):
+                if len(futures) >= parameters.self_play_batch_size:
+                    # Wait for at least one game to finish before adding a new one
+                    for completed_future in as_completed(futures):
+                        futures.remove(completed_future)
+                        break
+                # Submit a new game
+                futures.append(executor.submit(self.play_game, i))
+
+            # Ensure all remaining futures are completed
+            for future in as_completed(futures):
                 future.result()
 
         #for i in range(self.num_games):
@@ -167,7 +176,7 @@ class SelfPlay:
 if __name__ == '__main__':
     for gpu in tf.config.list_physical_devices('GPU'):
         tf.config.experimental.set_memory_growth(gpu, True)
-    mixed_precision.set_global_policy('mixed_float16')
+    mixed_precision.set_global_policy('float32')
 
     model = ReinforcementLearningModel(parameters.neural_network_input, parameters.neural_network_output)
     model.build()
