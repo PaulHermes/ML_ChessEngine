@@ -15,7 +15,7 @@ class MonteCarloTreeNode:
         self.parent = parent
         self.children = []
         self.visits = 0
-        self.wins = 0
+        self.wins = 0.0
         self.move = None
         self.prior_prob = prior_prob
         self.value = None
@@ -56,7 +56,7 @@ class MonteCarloTree:
             return self.prediction_manager.get_predictions_for_node(node)
         else:
             board_input = np.expand_dims(Chessboard.board_to_nn_input(node.board),axis=0)
-            return self.neural_network.model.predict(board_input, verbose=1)
+            return self.neural_network.model.predict(board_input, verbose=0)
 
     def selection(self):
         with self.lock:
@@ -85,7 +85,7 @@ class MonteCarloTree:
                 for move, prob in zip(legal_moves, legal_probs):
                     node.expand(move, prob)
 
-                node.value = value_output
+                node.value = float(value_output)
 
     def simulation(self, node):
         # Ensure predictions for the node are available
@@ -93,7 +93,7 @@ class MonteCarloTree:
             predictions = self.get_predictions_for_node(node)
             if predictions is not None:
                 _, value_output = predictions
-                node.value = value_output
+                node.value = float(value_output)
         self.prediction_manager.remove_node(node)
         return node.value
 

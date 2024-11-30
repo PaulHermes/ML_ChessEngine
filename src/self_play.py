@@ -51,9 +51,10 @@ class SelfPlay:
                 "player": "white" if game.current_agent == white_agent else "black"
             }
             game_data.append(move_data)
-            #print(f"------------ Game {game_index} ------------- \n")
+            print(f"------------ Game {game_index} ------------- \n")
             game.play_move(best_move)
             self.total_moves_played += 1
+            print(f"Total moves played: {self.total_moves_played}")
             if self.total_moves_played % 25 == 0:
                 print("clearing session")
                 tf.keras.backend.clear_session()
@@ -69,23 +70,28 @@ class SelfPlay:
     def play(self):
         start_time = time.time()
 
+        # Thread pool to manage parallelism
         with ThreadPoolExecutor(max_workers=parameters.self_play_batch_size) as executor:
-            futures = []
-            for i in range(self.num_games):
-                if len(futures) >= parameters.self_play_batch_size:
-                    # Wait for at least one game to finish before adding a new one
-                    for completed_future in as_completed(futures):
-                        futures.remove(completed_future)
-                        break
-                # Submit a new game
-                futures.append(executor.submit(self.play_game, i))
+            # Submit initial batch of games
+            futures = {executor.submit(self.play_game, i): i for i in range(parameters.self_play_batch_size)}
 
-            # Ensure all remaining futures are completed
+            # Keep submitting new games as others finish
+            for i in range(parameters.self_play_batch_size, self.num_games):
+                done_future = next(as_completed(futures))
+                try:
+                    done_future.result()  # Ensure the finished game's result is processed
+                except Exception as e:
+                    print(f"Game {futures[done_future]} failed with exception: {e}")
+                # Remove the finished future and submit a new game
+                futures.pop(done_future)
+                futures[executor.submit(self.play_game, i)] = i
+
+            # Wait for the remaining futures to finish
             for future in as_completed(futures):
-                future.result()
-
-        #for i in range(self.num_games):
-            #self.play_game(i)
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"Game {futures[future]} failed with exception: {e}")
 
         end_time = time.time()
         delta_time = end_time - start_time
@@ -186,7 +192,7 @@ if __name__ == '__main__':
 
     # Run self-play games
     num_games = parameters.self_play_per_cycle
-    self_play = SelfPlay(model, num_games, 0)
+    self_play = SelfPlay(model, num_games, 0.65)
     self_play.play()
 
     # Evaluate against previous checkpoints
