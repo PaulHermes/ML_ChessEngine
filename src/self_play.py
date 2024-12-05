@@ -70,28 +70,10 @@ class SelfPlay:
     def play(self):
         start_time = time.time()
 
-        # Thread pool to manage parallelism
-        with ThreadPoolExecutor(max_workers=parameters.self_play_batch_size) as executor:
-            # Submit initial batch of games
-            futures = {executor.submit(self.play_game, i): i for i in range(parameters.self_play_batch_size)}
-
-            # Keep submitting new games as others finish
-            for i in range(parameters.self_play_batch_size, self.num_games):
-                done_future = next(as_completed(futures))
-                try:
-                    done_future.result()  # Ensure the finished game's result is processed
-                except Exception as e:
-                    print(f"Game {futures[done_future]} failed with exception: {e}")
-                # Remove the finished future and submit a new game
-                futures.pop(done_future)
-                futures[executor.submit(self.play_game, i)] = i
-
-            # Wait for the remaining futures to finish
-            for future in as_completed(futures):
-                try:
-                    future.result()
-                except Exception as e:
-                    print(f"Game {futures[future]} failed with exception: {e}")
+        with ThreadPoolExecutor(max_workers=parameters.self_play_per_cycle) as executor:
+            futures = [executor.submit(self.play_game, i) for i in range(self.num_games)]
+            for future in futures:
+                future.result()
 
         end_time = time.time()
         delta_time = end_time - start_time

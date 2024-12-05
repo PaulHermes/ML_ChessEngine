@@ -23,18 +23,25 @@ class PredictionManager:
         self.batch_size = parameters.prediction_batch_size
         self.queue_condition = Condition()
         self.last_enqueue = None
+        self.process_interval = parameters.process_interval
+        self.enforce_batch_size = parameters.enforce_batch_size
 
-        if parameters.use_prediction_batching:
+        if parameters.use_prediction_manager:
             # Start worker thread
             worker_thread = threading.Thread(target=self.worker, daemon=True)
             worker_thread.start()
 
     def worker(self):
         while True:
-            if self.last_enqueue is not None and len(self.prediction_queue) > 0 and time.time() - self.last_enqueue > 20:
-                print(f"No new predictions for 20 seconds. Processing queue of length {len(self.prediction_queue)}")
-                self.process_prediction_queue()
-            time.sleep(1)
+            with self.queue_condition:
+                #if len(self.prediction_queue) == 0:
+                    #self.queue_condition.notify_all()
+                    #time.sleep(1)
+                if self.last_enqueue is not None and len(self.prediction_queue) > 0:
+                    elapsed_time = time.time() - self.last_enqueue
+                    if (not self.enforce_batch_size) or \
+                       (self.enforce_batch_size and elapsed_time >= self.process_interval):
+                        self.process_prediction_queue()
 
     def set_neural_network(self, neural_network):
         """Set the shared neural network for predictions."""
@@ -45,23 +52,26 @@ class PredictionManager:
         with self.queue_condition:
             self.prediction_queue.append((node, board_input))
             self.last_enqueue = time.time()
-            #print(f"Queue size: {len(self.prediction_queue)}")
 
-            # Trigger batch processing if the batch size is reached
-            if len(self.prediction_queue) >= self.batch_size:
-                #print("Batch size reached. Processing queue.")
+            #print(f"Queue size: {len(self.prediction_queue)}")
+            if self.enforce_batch_size and len(self.prediction_queue) >= self.batch_size:
+                print("Batch size reached. Processing queue.")
                 self.process_prediction_queue()
             else:
-                self.queue_condition.notify_all()  # Notify waiting threads
+                self.queue_condition.notify_all()
 
     def process_prediction_queue(self):
-        """Process the prediction queue in batches."""
+        """Process the prediction queue."""
         with self.queue_condition:
             if len(self.prediction_queue) == 0:
                 return  # Nothing to process
 
-            # Determine the batch size for this run
-            process_count = min(self.batch_size, len(self.prediction_queue))
+            if self.enforce_batch_size:
+                # Process batch of fixed size
+                process_count = min(self.batch_size, len(self.prediction_queue))
+            else:
+                # Process all queued items
+                process_count = len(self.prediction_queue)
 
             # Prepare batch input
             nodes, board_inputs = zip(*self.prediction_queue[:process_count])

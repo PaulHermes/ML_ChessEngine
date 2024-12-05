@@ -67,9 +67,13 @@ epochs = 5
 
 number_of_simulations = 200
 
-prediction_batch_size = 16
+prediction_batch_size = 24
 
-use_prediction_batching = False
+use_prediction_manager = True
+
+enforce_batch_size = False
+
+process_interval = 10
 # -------------------------------------------------------------------------------
 
 

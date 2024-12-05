@@ -47,12 +47,12 @@ class MonteCarloTree:
         self.lock = Lock()
 
     def enqueue_prediction(self, node):
-        if parameters.use_prediction_batching:
+        if parameters.use_prediction_manager:
             board_input = Chessboard.board_to_nn_input(node.board)
             self.prediction_manager.enqueue_prediction(node, board_input)
 
     def get_predictions_for_node(self, node):
-        if parameters.use_prediction_batching:
+        if parameters.use_prediction_manager:
             return self.prediction_manager.get_predictions_for_node(node)
         else:
             board_input = np.expand_dims(Chessboard.board_to_nn_input(node.board),axis=0)
@@ -77,7 +77,7 @@ class MonteCarloTree:
             predictions = self.get_predictions_for_node(node)
             if predictions is not None:
                 policy_output, value_output = predictions
-                if not parameters.use_prediction_batching:
+                if not parameters.use_prediction_manager:
                     policy_output = policy_output[0]
                     value_output = value_output[0]
                 legal_moves, legal_probs = self.probabilities_to_actions(policy_output, node.board)
@@ -85,17 +85,21 @@ class MonteCarloTree:
                 for move, prob in zip(legal_moves, legal_probs):
                     node.expand(move, prob)
 
-                node.value = float(value_output)
+                with node.lock:
+                    node.value = float(value_output)
 
     def simulation(self, node):
         # Ensure predictions for the node are available
-        while node.value is None:
-            predictions = self.get_predictions_for_node(node)
-            if predictions is not None:
-                _, value_output = predictions
-                node.value = float(value_output)
-        self.prediction_manager.remove_node(node)
-        return node.value
+        with node.lock:
+            while node.value is None:
+                print("Waiting for predictions...")
+                self.enqueue_prediction(node)
+                predictions = self.get_predictions_for_node(node)
+                if predictions is not None:
+                    _, value_output = predictions
+                    node.value = float(value_output)
+            self.prediction_manager.remove_node(node)
+            return node.value
 
     def backpropagation(self, node, result):
         while node:
