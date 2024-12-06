@@ -42,16 +42,26 @@ class LearningRateScheduler(Callback):
             return warmup_schedule
 
         elif stage == "main":
+            # Parameters for the main phase
             initial_lr = 0.2
             final_lr = 0.02
-            decay_steps = 100  # Total epochs for main training stage
+            decay_steps = 100
 
-            return ExponentialDecay(
+            decay_rate = (final_lr / initial_lr) ** (1 / decay_steps)
+
+            # Create the ExponentialDecay schedule
+            decay_schedule = ExponentialDecay(
                 initial_learning_rate=initial_lr,
                 decay_steps=decay_steps,
-                decay_rate=final_lr / initial_lr
+                decay_rate=decay_rate,
+                staircase=False  # Smooth decay
             )
 
+            def cumulative_decay_schedule(epoch):
+                cumulative_epoch = self.start_epoch + epoch
+                return decay_schedule(cumulative_epoch)
+
+            return cumulative_decay_schedule  # Return the adjusted callable
         elif stage == "finetune":
             initial_lr = 0.02
             final_lr = 0.002
