@@ -92,7 +92,7 @@ class MonteCarloTree:
         # Ensure predictions for the node are available
         with node.lock:
             while node.value is None:
-                print("Waiting for predictions...")
+                #print("Waiting for predictions...")
                 self.enqueue_prediction(node)
                 predictions = self.get_predictions_for_node(node)
                 if predictions is not None:

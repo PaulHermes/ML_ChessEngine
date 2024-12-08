@@ -70,7 +70,7 @@ class SelfPlay:
     def play(self):
         start_time = time.time()
 
-        with ThreadPoolExecutor(max_workers=parameters.self_play_per_cycle) as executor:
+        with ThreadPoolExecutor(max_workers=parameters.self_play_batch_size) as executor:
             futures = [executor.submit(self.play_game, i) for i in range(self.num_games)]
             for future in futures:
                 future.result()

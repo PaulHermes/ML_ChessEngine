@@ -53,12 +53,12 @@ adam_beta_2 = 0.999
 
 weight_decay = 1e-5
 
-self_play_per_cycle = 100
-self_play_batch_size = os.cpu_count()
+self_play_per_cycle = 300
+self_play_batch_size = self_play_per_cycle#os.cpu_count()
 
 eval_games = 1
 
-epochs = 5
+epochs = 10
 # -------------------------------------------------------------------------------
 
 # --------------------------- MCTS Parameters  -----------------

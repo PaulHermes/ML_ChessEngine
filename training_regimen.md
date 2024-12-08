@@ -62,7 +62,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
 **Objective**: Broaden exploration and improve strategic patterns by using a high learning rate that gradually decays, along with more MCTS simulations.
 
 ### Checklist
-- **Total Cycles**: 0/10
+- **Total Cycles**: 1/10
 1. **Prepare Data and Backup**:
    - [X] Move the previous self-play data to a backup folder before generating new data.
 2. **Configure Hyperparameters**:
@@ -75,7 +75,7 @@ This document provides a checklist-style guide for training a Chess AI using rei
 3. **Play Self-Play Games**:
    - [ ] Play `300` self-play games per cycle.
 4. **Training**:
-   - [ ] Train the model with `10` epochs per cycle.
+   - [X] Train the model with `10` epochs per cycle.
 5. **Evaluate**:
    - [ ] Evaluate against previous checkpoints.
 ---
