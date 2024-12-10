@@ -43,7 +43,7 @@ class LearningRateScheduler(Callback):
 
         elif stage == "main":
             # Parameters for the main phase
-            initial_lr = 0.2
+            initial_lr = 0.1
             final_lr = 0.02
             decay_steps = 100
 
