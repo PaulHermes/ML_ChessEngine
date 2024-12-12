@@ -75,5 +75,5 @@ if __name__ == '__main__':
     model.build()
     print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     pipeline = TrainingPipeline(model)
-    cycle_number = 3
+    cycle_number = 4
     pipeline.train(cycle=cycle_number)

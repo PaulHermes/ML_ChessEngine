@@ -48,7 +48,7 @@ class LearningRateScheduler(Callback):
             decay_steps = 100
 
             decay_rate = (final_lr / initial_lr) ** (1 / decay_steps)
-
+            print(f"decay rate: {decay_rate}")
             # Create the ExponentialDecay schedule
             decay_schedule = ExponentialDecay(
                 initial_learning_rate=initial_lr,
