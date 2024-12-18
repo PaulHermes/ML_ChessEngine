@@ -1,6 +1,8 @@
 import numpy as np
 import os
 import json
+
+import tensorflow
 from tensorflow.keras.callbacks import Callback
 from tensorflow.keras.optimizers.schedules import ExponentialDecay, PolynomialDecay
 
@@ -26,6 +28,11 @@ class LearningRateScheduler(Callback):
         with open(self.checkpoint_file, "w") as f:
             json.dump({"epoch": epoch}, f)
 
+    def manual_exponential_decay(self, initial_lr, final_lr, total_epochs, cumulative_epoch):
+        decay_rate = (final_lr / initial_lr) ** (1 / total_epochs)
+        lr = initial_lr * (decay_rate ** cumulative_epoch)
+        return lr
+
     def get_learning_rate_schedule(self, stage):
         if stage == "warmup":
             initial_lr = 0.02
@@ -47,19 +54,12 @@ class LearningRateScheduler(Callback):
             final_lr = 0.02
             decay_steps = 100
 
-            decay_rate = (final_lr / initial_lr) ** (1 / decay_steps)
-            print(f"decay rate: {decay_rate}")
-            # Create the ExponentialDecay schedule
-            decay_schedule = ExponentialDecay(
-                initial_learning_rate=initial_lr,
-                decay_steps=decay_steps,
-                decay_rate=decay_rate,
-                staircase=False  # Smooth decay
-            )
 
             def cumulative_decay_schedule(epoch):
                 cumulative_epoch = self.start_epoch + epoch
-                return decay_schedule(cumulative_epoch)
+                lr = self.manual_exponential_decay(initial_lr, final_lr, decay_steps, cumulative_epoch)
+                print(f"Cumulative Epoch: {cumulative_epoch}, Learning Rate: {lr:.6f}")
+                return lr
 
             return cumulative_decay_schedule  # Return the adjusted callable
         elif stage == "finetune":
@@ -69,7 +69,7 @@ class LearningRateScheduler(Callback):
 
             return PolynomialDecay(
                 initial_learning_rate=initial_lr,
-                decay_steps=decay_steps,
+                decay_steps=1,
                 end_learning_rate=final_lr,
                 power=2.0
             )
@@ -80,8 +80,9 @@ class LearningRateScheduler(Callback):
     def on_epoch_begin(self, epoch, logs=None):
         # Calculate the new learning rate
         current_lr = self.lr_schedule(epoch)
+        tensorflow.keras.backend.set_value(self.model.optimizer.learning_rate, current_lr)
         # Update the model's learning rate
-        self.model.optimizer.learning_rate = current_lr
+        #self.model.optimizer.learning_rate = current_lr
 
     def on_epoch_end(self, epoch, logs=None):
         effective_epoch = self.start_epoch + epoch + 1  # Increment for next epoch start
