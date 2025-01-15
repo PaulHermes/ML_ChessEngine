@@ -46,26 +46,26 @@ kernel_size = 3
 
 stride = 1
 
-batch_size = 128
+batch_size = 256
 
 adam_beta_1 = 0.9
 adam_beta_2 = 0.999
 
 weight_decay = 1e-5
 
-self_play_per_cycle = 300
-self_play_batch_size = self_play_per_cycle#os.cpu_count()
+self_play_per_cycle = 443
+self_play_batch_size = 150#os.cpu_count()
 
 eval_games = 1
 
-epochs = 10
+epochs = 20
 # -------------------------------------------------------------------------------
 
 # --------------------------- MCTS Parameters  -----------------
 
 # https://arxiv.org/pdf/1712.01815 Page 14
 
-number_of_simulations = 200
+number_of_simulations = 400
 
 prediction_batch_size = 24
 

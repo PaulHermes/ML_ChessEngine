@@ -195,3 +195,4 @@ if __name__ == '__main__':
     # Evaluate against previous checkpoints
     #eval_num_games = parameters.eval_games
     #results = self_play.evaluate_against_previous_versions(eval_num_games)
+    #print(results)

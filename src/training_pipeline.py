@@ -52,7 +52,7 @@ class TrainingPipeline:
 
         states, policy_targets, value_targets = self.load_data()
 
-        lr_scheduler = LearningRateScheduler(stage="main")
+        lr_scheduler = LearningRateScheduler(stage="finetune")
 
         self.model.model.fit(
             x=states,
@@ -75,5 +75,5 @@ if __name__ == '__main__':
     model.build()
     print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     pipeline = TrainingPipeline(model)
-    cycle_number = 3
+    cycle_number = 1
     pipeline.train(cycle=cycle_number)

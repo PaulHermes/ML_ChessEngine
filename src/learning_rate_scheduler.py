@@ -66,13 +66,14 @@ class LearningRateScheduler(Callback):
             initial_lr = 0.02
             final_lr = 0.002
             decay_steps = 200  # Total epochs for fine-tuning stage
+            power = 2.0
 
-            return PolynomialDecay(
-                initial_learning_rate=initial_lr,
-                decay_steps=1,
-                end_learning_rate=final_lr,
-                power=2.0
-            )
+            def polynomial_decay(epoch):
+                # Polynomial decay implementation
+                lr = initial_lr * (1 - epoch / decay_steps) ** power + final_lr * (epoch / decay_steps)
+                print(f"Epoch: {epoch}, Learning Rate: {lr:.6f}")
+                return lr
+            return polynomial_decay
 
         else:
             raise ValueError("Invalid stage. Choose from 'warmup', 'main', or 'finetune'.")

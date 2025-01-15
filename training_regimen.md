@@ -73,11 +73,11 @@ This document provides a checklist-style guide for training a Chess AI using rei
      - [X] **Beta Values**: `β1=0.9`, `β2=0.999`
      - [X] **Weight Decay**: `1e-5`
 3. **Play Self-Play Games**:
-   - [ ] Play `300` self-play games per cycle.
+   - [X] Play `300` self-play games per cycle.
 4. **Training**:
    - [X] Train the model with `10` epochs per cycle.
 5. **Evaluate**:
-   - [ ] Evaluate against previous checkpoints.
+   - [X] Evaluate against previous checkpoints.
 ---
 
 ## Stage 3: Fine-Tuning
@@ -87,18 +87,18 @@ This document provides a checklist-style guide for training a Chess AI using rei
 ### Checklist
 - **Total Cycles**: 0/10
 1. **Prepare Data and Backup**:
-   - [ ] Move the previous self-play data to a backup folder before generating new data.
+   - [X] Move the previous self-play data to a backup folder before generating new data.
 2. **Configure Hyperparameters**:
-   - [ ] Increase **MCTS Simulations per Move** to `400`.
-   - [ ] Set **Batch Size** to `256`.
-   - [ ] Change **Learning Rate Schedule** to Finetuning. 
-   - [ ] Use **AdamW Optimizer** with the following settings:
-     - [ ] **Beta Values**: `β1=0.9`, `β2=0.999`
-     - [ ] **Weight Decay**: `1e-5`
+   - [X] Increase **MCTS Simulations per Move** to `400`.
+   - [X] Set **Batch Size** to `256`.
+   - [X] Change **Learning Rate Schedule** to Finetuning. 
+   - [X] Use **AdamW Optimizer** with the following settings:
+     - [X] **Beta Values**: `β1=0.9`, `β2=0.999`
+     - [X] **Weight Decay**: `1e-5`
 3. **Play Self-Play Games**:
-   - [ ] Play `500` self-play games per cycle.
+   - [X] Play `500` self-play games per cycle.
 4. **Training**:
-   - [ ] Train the model with `20` epochs per cycle.
+   - [X] Train the model with `20` epochs per cycle.
 5. **Evaluate**:
    - [ ] Evaluate against previous checkpoints.
 ---
