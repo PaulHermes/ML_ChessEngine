@@ -29,7 +29,6 @@ class SelfPlay:
 
         util.load_latest_weights(self.model, "../checkpoints")
 
-
     def play_game(self, game_index):
         if random.random() < self.random_start_probability:
             random_fen = self.get_random_position()
@@ -40,7 +39,15 @@ class SelfPlay:
         white_agent = Agent(self.model)
         black_agent = Agent(self.model)
         game = Game(chess_board, white_agent, black_agent)
-        game_data = []
+
+        if not os.path.exists(self.save_folder):
+            os.makedirs(self.save_folder)
+
+        timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"{self.save_folder}/self_play_data_game_{game_index}_{timestamp}.json"
+
+        with open(filename, 'w') as f:
+            json.dump([], f)
 
         while not chess_board.board.is_game_over():
             nn_input = Chessboard.board_to_nn_input(chess_board.board)
@@ -50,22 +57,31 @@ class SelfPlay:
                 "move": best_move.uci(),
                 "player": "white" if game.current_agent == white_agent else "black"
             }
-            game_data.append(move_data)
+
+            with open(filename, 'r+') as f:
+                game_data = json.load(f)
+                game_data.append(move_data)
+                f.seek(0)
+                json.dump(game_data, f)
+
+            game_data = []
             print(f"------------ Game {game_index} ------------- \n")
             game.play_move(best_move)
             self.total_moves_played += 1
             print(f"Total moves played: {self.total_moves_played}")
+
             if self.total_moves_played % 25 == 0:
                 print("clearing session")
                 tf.keras.backend.clear_session()
 
         outcome = self.get_game_outcome(chess_board)
-        for move in game_data:
-            move["outcome"] = outcome
-
-        timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        filename = f"{self.save_folder}/self_play_data_game_{game_index}_{timestamp}.json"
-        self.save_data(game_data, filename)
+        print(f"Game {game_index} outcome: {outcome}")
+        with open(filename, 'r+') as f:
+            game_data = json.load(f)
+            for move in game_data:
+                move["outcome"] = outcome
+            f.seek(0)
+            json.dump(game_data, f)
 
     def play(self):
         start_time = time.time()
