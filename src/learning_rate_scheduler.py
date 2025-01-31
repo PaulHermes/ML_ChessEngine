@@ -70,8 +70,9 @@ class LearningRateScheduler(Callback):
 
             def polynomial_decay(epoch):
                 # Polynomial decay implementation
-                lr = initial_lr * (1 - epoch / decay_steps) ** power + final_lr * (epoch / decay_steps)
-                print(f"Epoch: {epoch}, Learning Rate: {lr:.6f}")
+                cumulative_epoch = self.start_epoch + epoch
+                lr = initial_lr * (1 - cumulative_epoch / decay_steps) ** power + final_lr * (cumulative_epoch / decay_steps)
+                print(f"Epoch: {cumulative_epoch}, Learning Rate: {lr:.6f}")
                 return lr
             return polynomial_decay
 
