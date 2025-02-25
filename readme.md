@@ -1,3 +1,1 @@
-py -m pip install --upgrade pip
-
-install requirements.txt
+conda env create -f environment.yml
