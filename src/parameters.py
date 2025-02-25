@@ -53,8 +53,8 @@ adam_beta_2 = 0.999
 
 weight_decay = 1e-5
 
-self_play_per_cycle = 363
-self_play_batch_size = 100#os.cpu_count()
+self_play_per_cycle = 500
+self_play_batch_size = 250#os.cpu_count()
 
 eval_games = 1
 

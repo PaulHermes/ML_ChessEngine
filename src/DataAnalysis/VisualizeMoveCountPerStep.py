@@ -33,6 +33,7 @@ def average_moves_in_all_subfolders(base_folder):
     for folder_path in sorted_folders:
         folder_name = os.path.basename(folder_path)
         avg_moves = average_moves_in_folder(folder_path)
+        print(f"Folder: {folder_name}, Average Moves: {avg_moves}")
         results[folder_name] = avg_moves
     return results
 
@@ -51,14 +52,15 @@ def plot_average_moves(averages):
     plt.axvline(x=4.5, color='gray', linestyle='--', linewidth=1)
     plt.axvline(x=14.5, color='gray', linestyle='--', linewidth=1)
 
-    plt.text(-0.5, (min(avg_moves) + max(avg_moves)) / 2, "Warm-Up", color="gray", fontsize=10, ha="right",va="center", rotation=90)
-    plt.text(4.5, (min(avg_moves) + max(avg_moves))/2, "Main", color="gray", fontsize=10, ha="left", va="center", rotation=90)
-    plt.text(14.5, (min(avg_moves) + max(avg_moves))/2, "Fine Tuning", color="gray", fontsize=10, ha="left", va="center", rotation=90)
+    plt.text(-0.5, (min(avg_moves) + max(avg_moves)) / 2, "Warm-Up", color="gray", fontsize=18, ha="right",va="center", rotation=90)
+    plt.text(4.5, (min(avg_moves) + max(avg_moves))/2, "Main", color="gray", fontsize=18, ha="left", va="center", rotation=90)
+    plt.text(14.5, (min(avg_moves) + max(avg_moves))/2, "Fine Tuning", color="gray", fontsize=18, ha="left", va="center", rotation=90)
 
-    plt.xlabel('Self-Play Schritt', fontsize=12)
-    plt.ylabel('Durchschnittliche Anzahl Halb-Züge', fontsize=12)
-    plt.title('Durchschnittliche Anzahl Halb-Züge pro Self-Play Schritt', fontsize=14)
-    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.xlabel('Self-Play Schritt', fontsize=24)
+    plt.ylabel('Durchschnittliche Anzahl Halb-Züge', fontsize=24)
+    plt.title('Durchschnittliche Anzahl Halb-Züge pro Self-Play Schritt', fontsize=26)
+    plt.xticks(rotation=45, ha='right', fontsize=24)
+    plt.yticks(fontsize=24)
     plt.tight_layout()
     plt.show()
 

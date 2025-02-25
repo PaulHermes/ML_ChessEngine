@@ -74,11 +74,12 @@ def plot_win_loss_draw_ratios(game_results):
     plt.bar(x, loss_ratios, width=0.6, label='Loss Ratio', color='red', bottom=draw_bottom)
     plt.bar(x, win_ratios, width=0.6, label='Win Ratio', color='green', bottom=loss_bottom)
 
-    plt.xlabel('Self-Play Schritt', fontsize=12)
-    plt.ylabel('Verhältnis', fontsize=12)
-    plt.title('Win/Loss/Draw Verhältnis pro Self-Play Schritt', fontsize=14)
-    plt.xticks(x, folders, rotation=45, ha='right', fontsize=10)
-    plt.legend()
+    plt.xlabel('Self-Play Schritt', fontsize=24)
+    plt.ylabel('Verhältnis', fontsize=24)
+    plt.title('Win/Loss/Draw Verhältnis pro Self-Play Schritt', fontsize=26)
+    plt.xticks(x, folders, rotation=45, ha='right', fontsize=24)
+    plt.yticks(fontsize=24)
+    plt.legend(fontsize=24)
     plt.tight_layout()
     plt.show()
 

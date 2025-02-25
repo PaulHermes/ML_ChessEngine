@@ -20,16 +20,18 @@ def plot_move_durations(durations):
     plt.axvline(x=5.5, color='gray', linestyle='--', linewidth=1)
     plt.axvline(x=15.5, color='gray', linestyle='--', linewidth=1)
 
-    plt.text(1, (min(move_durations) + max(move_durations)) / 2, "Warm-Up", color="gray", fontsize=10, ha="left",va="center", rotation=90)
-    plt.text(5.5, (min(move_durations) + max(move_durations))/2, "Main", color="gray", fontsize=10, ha="left", va="center", rotation=90)
-    plt.text(15.5, (min(move_durations) + max(move_durations))/2, "Fine Tuning", color="gray", fontsize=10, ha="left", va="center", rotation=90)
+    plt.text(1, (min(move_durations) + max(move_durations)) / 2, "Warm-Up", color="gray", fontsize=18, ha="left",va="center", rotation=90)
+    plt.text(5.5, (min(move_durations) + max(move_durations))/2, "Main", color="gray", fontsize=18, ha="left", va="center", rotation=90)
+    plt.text(15.5, (min(move_durations) + max(move_durations))/2, "Fine Tuning", color="gray", fontsize=18, ha="left", va="center", rotation=90)
 
-    plt.xlabel("Self-Play Schritt", fontsize=12)
-    plt.ylabel("Durchschnittliche Simulationsberechnungsdauer", fontsize=12)
-    plt.title("Durchschnittliche Simulationsberechnungsdauer pro Self-Play Schritt", fontsize=14)
+    plt.xlabel("Self-Play Schritt", fontsize=24)
+    plt.ylabel("Durchschnittliche Simulationsberechnungsdauer", fontsize=24)
+    plt.title("Durchschnittliche Simulationsberechnungsdauer pro Self-Play Schritt", fontsize=26)
     plt.grid(True, linestyle='--', alpha=0.6)
+    plt.xticks(steps, fontsize=24)
+    plt.yticks(fontsize=24)
     plt.tight_layout()
-    plt.legend(fontsize=10)
+    plt.legend(fontsize=24)
 
     plt.show()
 
