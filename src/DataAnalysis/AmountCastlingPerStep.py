@@ -82,7 +82,7 @@ def plot_castling_moves(castling_counts):
     plt.tight_layout()
     plt.show()
 
-base_folder_path = "C:\\Users\\Infin\\Desktop\\Chess Data backup\\records"
+base_folder_path = "C:\\Users\\Infin\\Desktop\\Chess Data backup\\records" #Replace with path to your folder
 
 castling_counts = count_castling_moves_in_all_subfolders(base_folder_path)
 

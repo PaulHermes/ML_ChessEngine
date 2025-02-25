@@ -57,7 +57,7 @@ def plot_game_moves(game_moves):
     plt.show()
 
 
-base_folder_path = "C:\\Users\\Infin\\Desktop\\Chess Data backup\\records"
+base_folder_path = "C:\\Users\\Infin\\Desktop\\Chess Data backup\\records" #Replace with path to your folder
 
 game_moves = count_moves_in_all_games(base_folder_path)
 

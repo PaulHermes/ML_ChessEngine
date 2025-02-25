@@ -83,7 +83,7 @@ def plot_win_loss_draw_ratios(game_results):
     plt.tight_layout()
     plt.show()
 
-base_folder_path = "C:\\Users\\Infin\\Desktop\\Chess Data backup\\records"
+base_folder_path = "C:\\Users\\Infin\\Desktop\\Chess Data backup\\records" #Replace with path to your folder
 
 game_results = aggregate_game_results_in_all_subfolders(base_folder_path)
 

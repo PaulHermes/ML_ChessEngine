@@ -64,7 +64,7 @@ def plot_average_moves(averages):
     plt.tight_layout()
     plt.show()
 
-base_folder_path = "C:\\Users\\Infin\\Desktop\\Chess Data backup\\records"
+base_folder_path = "C:\\Users\\Infin\\Desktop\\Chess Data backup\\records" #Replace with path to your folder
 
 average_moves = average_moves_in_all_subfolders(base_folder_path)
 
